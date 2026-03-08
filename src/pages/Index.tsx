@@ -128,7 +128,8 @@ const Index = () => {
     if (!hasMultiRepo && newMode === "multi_repo") { setUpgradeFeature("Multi-Repo Analysis"); return; }
     if (newMode === "pr_diff") setActiveTab("pr");
     else if (newMode === "multi_repo") setActiveTab("multi");
-    else if (activeTab === "pr" || activeTab === "multi") setActiveTab("paste");
+    else if (newMode === "uiux_review") setActiveTab("figma");
+    else if (activeTab === "pr" || activeTab === "multi" || activeTab === "figma") setActiveTab("paste");
   };
 
   const handleTabChange = (tab: string) => {
