@@ -35,6 +35,7 @@ const Index = () => {
   const sourceRef = useRef<"paste" | "github" | "file" | "example">("paste");
   const { user } = useAuth();
   const { hasPRReview, hasMultiRepo, hasHistory, hasFollowUp } = useUserPlan();
+  const { canAnalyze, refresh: refreshUsage } = useUsage();
 
   const handleAnalyze = useCallback(async (code: string, question?: string, images?: string[]) => {
     setOutput("");
