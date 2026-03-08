@@ -6,6 +6,7 @@ import { Braces, Loader2 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Link } from "react-router-dom";
 import { lovable } from "@/integrations/lovable/index";
+import { SEOHead } from "@/components/SEOHead";
 
 const Auth = () => {
   const { signIn, signUp } = useAuth();
