@@ -49,6 +49,7 @@ mermaid.initialize({
 interface AnalysisOutputProps {
   content: string;
   isStreaming: boolean;
+  mode?: string;
   shareData?: {
     title: string;
     code: string;
