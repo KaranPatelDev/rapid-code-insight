@@ -142,6 +142,9 @@ const Index = () => {
             <Link to="/dashboard" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 mr-1 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
               <BarChart3 className="h-3.5 w-3.5" /> Stats
             </Link>
+            <Link to="/bookmarklet" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 mr-1 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
+              <Puzzle className="h-3.5 w-3.5" /> Widget
+            </Link>
             <HistoryPanel onSelect={handleHistorySelect} />
             <ThemeToggle />
             <UserMenu />
