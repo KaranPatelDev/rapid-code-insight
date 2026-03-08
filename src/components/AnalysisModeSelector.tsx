@@ -1,7 +1,7 @@
-import { Shield, Zap, CheckCircle, Building2 } from "lucide-react";
+import { Shield, Zap, CheckCircle, Building2, GitPullRequest } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type AnalysisMode = "architecture" | "security" | "performance" | "best_practices";
+export type AnalysisMode = "architecture" | "security" | "performance" | "best_practices" | "pr_diff";
 
 interface AnalysisModeSelectorProps {
   value: AnalysisMode;
@@ -13,11 +13,12 @@ const modes: { id: AnalysisMode; label: string; icon: typeof Shield; description
   { id: "security", label: "Security", icon: Shield, description: "Vulnerabilities & risks" },
   { id: "performance", label: "Performance", icon: Zap, description: "Speed & efficiency" },
   { id: "best_practices", label: "Best Practices", icon: CheckCircle, description: "Code quality" },
+  { id: "pr_diff", label: "PR Review", icon: GitPullRequest, description: "Diff & impact analysis" },
 ];
 
 export function AnalysisModeSelector({ value, onChange }: AnalysisModeSelectorProps) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
       {modes.map((mode) => {
         const Icon = mode.icon;
         const active = value === mode.id;
