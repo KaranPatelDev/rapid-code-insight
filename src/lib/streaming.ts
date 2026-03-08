@@ -4,6 +4,7 @@ export async function streamAnalysis({
   code,
   question,
   mode,
+  images,
   onDelta,
   onDone,
   onError,
@@ -11,6 +12,7 @@ export async function streamAnalysis({
   code: string;
   question?: string;
   mode?: string;
+  images?: string[];
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (error: string) => void;
@@ -21,7 +23,7 @@ export async function streamAnalysis({
       "Content-Type": "application/json",
       Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
-    body: JSON.stringify({ code, question, mode: mode || "architecture" }),
+    body: JSON.stringify({ code, question, mode: mode || "architecture", images }),
   });
 
   if (!resp.ok) {
