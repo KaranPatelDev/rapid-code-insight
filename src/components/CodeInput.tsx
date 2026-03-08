@@ -31,8 +31,8 @@ export function CodeInput({ onSubmit, isLoading }: CodeInputProps) {
     const sortedFiles = fileArray
       .filter((f) => textExtensions.test(f.name) || !f.name.includes("."))
       .sort((a, b) => {
-        const pathA = (f as any).webkitRelativePath || a.name;
-        const pathB = (f as any).webkitRelativePath || b.name;
+        const pathA = (a as any).webkitRelativePath || a.name;
+        const pathB = (b as any).webkitRelativePath || b.name;
         return pathA.localeCompare(pathB);
       });
 
