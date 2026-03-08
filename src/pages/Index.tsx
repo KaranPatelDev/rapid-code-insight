@@ -35,7 +35,7 @@ const Index = () => {
   const { user } = useAuth();
   const { hasPRReview, hasMultiRepo, hasHistory, hasFollowUp } = useUserPlan();
 
-  const handleAnalyze = useCallback(async (code: string, question?: string) => {
+  const handleAnalyze = useCallback(async (code: string, question?: string, images?: string[]) => {
     setOutput("");
     setIsLoading(true);
     codeRef.current = code;
@@ -48,6 +48,7 @@ const Index = () => {
         code,
         question,
         mode,
+        images,
         onDelta: (text) => {
           fullOutput += text;
           setOutput((prev) => prev + text);
@@ -100,9 +101,9 @@ const Index = () => {
     handleAnalyze(code);
   };
 
-  const handlePasteSubmit = (code: string, question?: string) => {
+  const handlePasteSubmit = (code: string, question?: string, images?: string[]) => {
     sourceRef.current = "paste";
-    handleAnalyze(code, question);
+    handleAnalyze(code, question, images);
   };
 
   const handleHistorySelect = (entry: HistoryEntry) => {
