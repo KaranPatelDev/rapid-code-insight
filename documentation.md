@@ -569,6 +569,16 @@ Authenticated users are redirected to the main analysis page (`Index.tsx`) via t
 4. Click **"Fetch & Analyze"**
 5. The AI analyzes how the repositories interact as a system
 
+### UI/UX Design Review
+
+1. Select the **"UI/UX Review"** mode from the mode grid (under "Review") — the tab auto-switches to **"UI/UX Design"**
+2. Choose an input method:
+   - **Figma Link**: Paste a Figma file/design/prototype URL (e.g., `figma.com/design/...`)
+   - **Paste / Upload**: Paste frontend code (HTML/CSS/React), Figma exported tokens, or design specs — or drag-and-drop / upload design files (`.fig`, `.sketch`, `.xd`, `.css`, `.html`, `.tsx`, `.json`, etc.)
+3. Optionally type a specific design question
+4. Click **"Review UI/UX Design"**
+5. The AI analyzes for visual hierarchy, accessibility (WCAG), interaction patterns, responsive design, and provides actionable improvement suggestions
+
 ### Generating Documentation
 
 1. Select the **"Documentation"** mode from the mode grid (under "Improve")
