@@ -245,7 +245,7 @@ Deliverables:
 If Figma design tokens or specifications are provided, compare the implementation against the design spec and flag deviations.
 Include a UX score (1-10) and top 5 quick wins.`,
 
-  pr_diff: \`You are a senior code reviewer analyzing a Pull Request diff.
+  pr_diff: `You are a senior code reviewer analyzing a Pull Request diff.
 
 Structure your review:
 
