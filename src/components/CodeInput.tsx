@@ -23,7 +23,7 @@ export function CodeInput({ onSubmit, isLoading }: CodeInputProps) {
 
   const processFiles = useCallback(async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
-    const textExtensions = /\.(ts|tsx|js|jsx|py|rs|go|java|rb|php|css|html|json|yaml|yml|toml|md|txt|sql|sh|bash|c|cpp|h|hpp|cs|swift|kt|scala|vue|svelte|astro|prisma|graphql|gql|env|dockerfile|makefile|xml|csv|ini|cfg|conf|gitignore|editorconfig|prettierrc|eslintrc)$/i;
+    const textExtensions = /\.(ts|tsx|js|jsx|py|rs|go|java|rb|php|css|html|json|yaml|yml|toml|md|txt|sql|sh|bash|c|cpp|h|hpp|cs|swift|kt|scala|vue|svelte|astro|prisma|graphql|gql|env|dockerfile|makefile|xml|csv|ini|cfg|conf|gitignore|editorconfig|prettierrc|eslintrc|fig|sketch|xd)$/i;
     
     const results: string[] = [];
 
