@@ -209,6 +209,10 @@ const Index = () => {
                 Multi-Repo
                 {!hasMultiRepo && <Lock className="h-3 w-3 text-muted-foreground" />}
               </TabsTrigger>
+              <TabsTrigger value="figma" className="text-xs flex items-center gap-1">
+                <Palette className="h-3 w-3" />
+                UI/UX Design
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="paste">
               <CodeInput onSubmit={handlePasteSubmit} isLoading={isLoading} />
@@ -226,6 +230,9 @@ const Index = () => {
             </TabsContent>
             <TabsContent value="multi">
               <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
+            </TabsContent>
+            <TabsContent value="figma">
+              <FigmaInput onSubmit={handlePasteSubmit} isLoading={isLoading} />
             </TabsContent>
           </Tabs>
         </div>
