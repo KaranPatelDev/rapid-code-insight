@@ -1,3 +1,4 @@
+import "highlight.js/styles/github-dark.css";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Copy, Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";

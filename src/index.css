@@ -1,5 +1,4 @@
 /* Fonts loaded via preload in index.html to avoid render blocking */
-@import 'highlight.js/styles/github-dark.css';
 
 @tailwind base;
 @tailwind components;
