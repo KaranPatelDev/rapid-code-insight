@@ -10,6 +10,7 @@
 
 - [Overview](#overview)
 - [Features](#features)
+- [Pricing & Plans](#pricing--plans)
 - [Project Setup](#project-setup)
   - [Prerequisites](#prerequisites)
   - [Clone & Install](#clone--install)
@@ -22,6 +23,7 @@
 - [Project Structure](#project-structure)
 - [Architecture](#architecture)
 - [Analysis Modes](#analysis-modes)
+- [Landing Page](#landing-page)
 - [User Guide](#user-guide)
   - [Getting Started](#getting-started)
   - [Analyzing Code by Pasting](#analyzing-code-by-pasting)
