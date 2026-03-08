@@ -30,6 +30,12 @@ export function UserMenu() {
         <DropdownMenuItem className="text-xs text-muted-foreground" disabled>
           {user.email}
         </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/profile" className="flex items-center">
+            <Settings className="h-3.5 w-3.5 mr-2" />
+            Profile Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={signOut} className="text-destructive focus:text-destructive">
           <LogOut className="h-3.5 w-3.5 mr-2" />
           Sign out
