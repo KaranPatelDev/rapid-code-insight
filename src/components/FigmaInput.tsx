@@ -184,6 +184,8 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
+          onPaste={handlePaste}
+          tabIndex={0}
         >
           <div className="flex items-center gap-2 text-muted-foreground">
             <Image className="h-4 w-4" />
@@ -225,9 +227,11 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
             )}
             <Image className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">
-              Click or drag & drop screenshots here
+              Click, drag & drop, or <span className="text-primary font-medium">Ctrl+V</span> to paste screenshots
             </p>
             <p className="text-xs text-muted-foreground/60 mt-1">
+              PNG, JPG, WebP · Max 10MB each · Up to 5 images
+            </p>
               PNG, JPG, WebP · Max 10MB each · Up to 5 images
             </p>
             <input
