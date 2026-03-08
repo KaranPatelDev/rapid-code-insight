@@ -49,6 +49,7 @@ const MODE_LABELS: Record<string, string> = {
   multi_repo: "Multi-Repo",
   pr_diff: "PR Review",
   documentation: "Documentation",
+};
 
 const MODE_ICONS: Record<string, typeof Building2> = {
   architecture: Building2,

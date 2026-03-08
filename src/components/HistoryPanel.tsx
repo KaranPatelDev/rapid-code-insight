@@ -31,6 +31,7 @@ const modeLabels: Record<string, string> = {
   multi_repo: "Multi-Repo",
   pr_diff: "PR Review",
   documentation: "Documentation",
+};
 
 export function HistoryPanel({ onSelect }: HistoryPanelProps) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
