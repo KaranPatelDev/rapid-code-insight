@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { SEOHead } from "@/components/SEOHead";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,21 @@ import {
   Braces, Shield, Bug, TestTube, Wrench, GitPullRequest,
   Layers, Zap, ArrowRight, Star, Check, BookOpen
 } from "lucide-react";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const } },
+} as const;
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+} as const;
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
+} as const;
 
 const features = [
   { icon: Layers, title: "Architecture Analysis", desc: "Understand patterns, modules, and dependency graphs at a glance." },
@@ -101,20 +117,25 @@ const Landing = () => {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" />
-        <div className="max-w-4xl mx-auto px-4 pt-24 pb-20 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-medium px-3 py-1.5 rounded-full mb-6 border border-primary/20">
+        <motion.div
+          className="max-w-4xl mx-auto px-4 pt-24 pb-20 text-center relative z-10"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
+          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-medium px-3 py-1.5 rounded-full mb-6 border border-primary/20">
             <Zap className="h-3 w-3" /> 13 specialized analysis modes
-          </div>
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
+          </motion.div>
+          <motion.h1 variants={fadeUp} className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
             Understand any codebase
             <br />
             <span className="text-primary">in seconds</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+          </motion.h1>
+          <motion.p variants={fadeUp} className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Paste code, connect GitHub repos, or submit PRs — get instant AI-powered insights on
             architecture, security, performance, and more.
-          </p>
-          <div className="flex items-center justify-center gap-4">
+          </motion.p>
+          <motion.div variants={fadeUp} className="flex items-center justify-center gap-4">
             <Link to="/auth">
               <Button size="lg" className="text-sm gap-2 px-8 h-12 shadow-lg shadow-primary/25">
                 Start Analyzing <ArrowRight className="h-4 w-4" />
@@ -125,26 +146,39 @@ const Landing = () => {
                 <BookOpen className="h-4 w-4" /> Read the Guide
               </Button>
             </Link>
-          </div>
-          <p className="text-xs text-muted-foreground mt-4">Free tier available · No credit card required</p>
-        </div>
+          </motion.div>
+          <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-4">Free tier available · No credit card required</motion.p>
+        </motion.div>
       </section>
 
       {/* Features */}
       <section id="features" className="py-24 border-t border-border/30">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeUp}
+          >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
               Everything you need to understand code
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               From security audits to architecture diagrams — 13 modes built for real engineering workflows.
             </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
             {features.map((f) => (
-              <div
+              <motion.div
                 key={f.title}
+                variants={fadeIn}
                 className="group bg-card border border-border/50 rounded-xl p-5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
               >
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -152,27 +186,40 @@ const Landing = () => {
                 </div>
                 <h3 className="font-semibold mb-1.5">{f.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Testimonials */}
       <section className="py-24 bg-muted/30 border-t border-border/30">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeUp}
+          >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
               Trusted by engineers worldwide
             </h2>
             <p className="text-muted-foreground text-lg">
               See what developers are saying about CodeLens AI.
             </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
             {testimonials.map((t) => (
-              <div
+              <motion.div
                 key={t.name}
+                variants={fadeIn}
                 className="bg-card border border-border/50 rounded-xl p-6 flex flex-col"
               >
                 <div className="flex gap-1 mb-4">
@@ -190,27 +237,40 @@ const Landing = () => {
                     <p className="text-xs text-muted-foreground">{t.role}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Pricing */}
       <section id="pricing" className="py-24 border-t border-border/30">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeUp}
+          >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
               Simple, transparent pricing
             </h2>
             <p className="text-muted-foreground text-lg">
               Start free. Upgrade when you need more power.
             </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
             {plans.map((plan) => (
-              <div
+              <motion.div
                 key={plan.name}
+                variants={fadeIn}
                 className={`bg-card border rounded-xl p-6 flex flex-col relative ${
                   plan.highlighted
                     ? "border-primary shadow-xl shadow-primary/10 scale-[1.02]"
@@ -243,15 +303,21 @@ const Landing = () => {
                     {plan.cta}
                   </Button>
                 </Link>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-24 border-t border-border/30">
-        <div className="max-w-3xl mx-auto px-4 text-center">
+        <motion.div
+          className="max-w-3xl mx-auto px-4 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeUp}
+        >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
             Ready to understand your code better?
           </h2>
@@ -263,7 +329,7 @@ const Landing = () => {
               Get Started Free <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-        </div>
+        </motion.div>
       </section>
 
       {/* Footer */}
