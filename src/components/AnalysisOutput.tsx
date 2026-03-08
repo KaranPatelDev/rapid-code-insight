@@ -58,7 +58,7 @@ interface AnalysisOutputProps {
   };
 }
 
-export function AnalysisOutput({ content, isStreaming, shareData }: AnalysisOutputProps) {
+export function AnalysisOutput({ content, isStreaming, mode, shareData }: AnalysisOutputProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
