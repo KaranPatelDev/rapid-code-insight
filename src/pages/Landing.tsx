@@ -10,18 +10,18 @@ import {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const } },
+} as const;
 
 const staggerContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.08 } },
-};
+} as const;
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-};
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
+} as const;
 
 const features = [
   { icon: Layers, title: "Architecture Analysis", desc: "Understand patterns, modules, and dependency graphs at a glance." },
