@@ -138,7 +138,7 @@ const Index = () => {
     setActiveTab(tab);
   };
 
-  const showExamples = !["pr_diff", "multi_repo"].includes(mode);
+  const showExamples = !["pr_diff", "multi_repo", "uiux_review"].includes(mode);
 
   return (
     <div className="min-h-screen bg-background">
