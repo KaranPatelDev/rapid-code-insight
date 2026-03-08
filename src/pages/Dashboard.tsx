@@ -21,17 +21,31 @@ interface AnalysisRow {
 
 const MODE_COLORS: Record<string, string> = {
   architecture: "hsl(250, 80%, 65%)",
+  request_flow: "hsl(200, 70%, 55%)",
   security: "hsl(0, 72%, 55%)",
   performance: "hsl(45, 90%, 50%)",
   best_practices: "hsl(170, 70%, 50%)",
+  debugging: "hsl(30, 80%, 55%)",
+  impact_analysis: "hsl(320, 60%, 55%)",
+  test_generation: "hsl(140, 60%, 45%)",
+  refactoring: "hsl(180, 50%, 50%)",
+  knowledge_graph: "hsl(260, 50%, 60%)",
+  multi_repo: "hsl(210, 60%, 55%)",
   pr_diff: "hsl(280, 60%, 60%)",
 };
 
 const MODE_LABELS: Record<string, string> = {
   architecture: "Architecture",
+  request_flow: "Request Flow",
   security: "Security",
   performance: "Performance",
   best_practices: "Best Practices",
+  debugging: "AI Debug",
+  impact_analysis: "Impact",
+  test_generation: "Test Gen",
+  refactoring: "Refactoring",
+  knowledge_graph: "Knowledge",
+  multi_repo: "Multi-Repo",
   pr_diff: "PR Review",
 };
 
