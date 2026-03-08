@@ -22,17 +22,13 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
   const processFiles = useCallback(async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
     const results: string[] = [];
-
     for (const file of fileArray.slice(0, 20)) {
       try {
         const text = await file.text();
         const path = (file as any).webkitRelativePath || file.name;
         results.push(`// === ${path} ===\n${text}`);
-      } catch {
-        // Skip binary files
-      }
+      } catch { /* Skip binary files */ }
     }
-
     if (results.length > 0) {
       setPastedContent(results.join("\n\n"));
       setInputMode("paste");
@@ -42,20 +38,16 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
   const processImages = useCallback(async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
     const newScreenshots: { name: string; dataUrl: string }[] = [];
-
     for (const file of fileArray.slice(0, 5)) {
       if (!file.type.startsWith("image/")) continue;
-      if (file.size > 10 * 1024 * 1024) continue; // 10MB max per image
-
+      if (file.size > 10 * 1024 * 1024) continue;
       const dataUrl = await new Promise<string>((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
         reader.readAsDataURL(file);
       });
-
       newScreenshots.push({ name: file.name, dataUrl });
     }
-
     if (newScreenshots.length > 0) {
       setScreenshots((prev) => [...prev, ...newScreenshots].slice(0, 5));
       setInputMode("screenshot");
@@ -80,7 +72,6 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
       setDragOver(false);
       const files = e.dataTransfer.files;
       if (files.length === 0) return;
-
       const hasImages = Array.from(files).some((f) => f.type.startsWith("image/"));
       if (hasImages) {
         processImages(files);
@@ -90,6 +81,22 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
     },
     [processFiles, processImages]
   );
+
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const imageFiles: File[] = [];
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith("image/")) {
+        const file = item.getAsFile();
+        if (file) imageFiles.push(file);
+      }
+    }
+    if (imageFiles.length > 0) {
+      e.preventDefault();
+      processImages(imageFiles);
+    }
+  }, [processImages]);
 
   const removeScreenshot = (index: number) => {
     setScreenshots((prev) => prev.filter((_, i) => i !== index));
@@ -118,7 +125,7 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" onPaste={handlePaste}>
       {/* Mode toggle */}
       <div className="flex gap-2 flex-wrap">
         <button
@@ -191,16 +198,11 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
             <span className="text-xs text-muted-foreground/60">({screenshots.length}/5)</span>
           </div>
 
-          {/* Screenshot previews */}
           {screenshots.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {screenshots.map((ss, i) => (
                 <div key={i} className="relative group rounded-lg overflow-hidden border border-border/50 bg-muted/30">
-                  <img
-                    src={ss.dataUrl}
-                    alt={ss.name}
-                    className="w-full h-32 object-cover"
-                  />
+                  <img src={ss.dataUrl} alt={ss.name} className="w-full h-32 object-cover" />
                   <button
                     onClick={() => removeScreenshot(i)}
                     className="absolute top-1.5 right-1.5 p-1 rounded-full bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
@@ -213,7 +215,6 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
             </div>
           )}
 
-          {/* Upload area */}
           <div
             className="relative border-2 border-dashed border-border/50 rounded-lg p-8 text-center hover:border-primary/30 transition-colors cursor-pointer"
             onClick={() => imageInputRef.current?.click()}
@@ -225,7 +226,7 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
             )}
             <Image className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">
-              Click or drag & drop screenshots here
+              Click, drag & drop, or <span className="text-primary font-medium">Ctrl+V</span> to paste screenshots
             </p>
             <p className="text-xs text-muted-foreground/60 mt-1">
               PNG, JPG, WebP · Max 10MB each · Up to 5 images
@@ -264,12 +265,7 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
           />
           <div className="absolute bottom-3 right-3">
             <label>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
-                asChild
-              >
+              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground cursor-pointer" asChild>
                 <span>
                   <Upload className="h-3 w-3 mr-1" />
                   Upload Files
