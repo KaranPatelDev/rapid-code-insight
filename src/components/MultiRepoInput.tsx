@@ -42,7 +42,8 @@ export function MultiRepoInput({ onCodeFetched, isLoading }: MultiRepoInputProps
     setError("");
     const validRepos = repos.filter((r) => r.trim()).map((r) => parseGitHubUrl(r));
     if (validRepos.some((r) => !r)) {
-      setError("One or more invalid URLs. Use format: owner/repo");
+      const badIdx = validRepos.findIndex((r) => !r);
+      setError(`Repo ${badIdx + 1} isn't valid. Use format: owner/repo or https://github.com/owner/repo`);
       return;
     }
     if (validRepos.filter(Boolean).length < 2) {

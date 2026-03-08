@@ -31,7 +31,10 @@ export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
     setError("");
     const parsed = parseGitHubUrl(url);
     if (!parsed) {
-      setError("Invalid GitHub URL. Use format: owner/repo or https://github.com/owner/repo");
+      const hint = url.includes("github.com")
+        ? `Try: https://github.com/facebook/react`
+        : `Try: facebook/react or https://github.com/facebook/react`;
+      setError(`Couldn't parse that URL. ${hint}`);
       return;
     }
 
