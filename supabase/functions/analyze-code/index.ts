@@ -470,26 +470,62 @@ serve(async (req) => {
 
     const systemPrompt = systemPrompts[mode] || systemPrompts.architecture;
 
-    let userMessage: string;
-    if (question) {
-      userMessage = `Here is the codebase:\n\n\`\`\`\n${code}\n\`\`\`\n\nQuestion: ${question}`;
-    } else if (mode === "pr_diff") {
-      userMessage = `Review this Pull Request:\n\n${code}`;
-    } else if (mode === "multi_repo") {
-      userMessage = `Analyze these repositories together as a system:\n\n${code}`;
-    } else if (mode === "test_generation") {
-      userMessage = `Generate comprehensive tests for this code:\n\n\`\`\`\n${code}\n\`\`\``;
-    } else if (mode === "debugging") {
-      userMessage = `Debug this code — find all bugs and potential issues:\n\n\`\`\`\n${code}\n\`\`\``;
-    } else if (mode === "refactoring") {
-      userMessage = `Provide refactoring suggestions for this code:\n\n\`\`\`\n${code}\n\`\`\``;
-    } else if (mode === "documentation") {
-      userMessage = `Generate comprehensive, production-grade documentation for this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
-    } else if (mode === "uiux_review") {
-      userMessage = `Review this frontend code or design specification and provide UI/UX design feedback:\n\n\`\`\`\n${code}\n\`\`\``;
+    // Build user message content - supports multimodal (text + images)
+    let userContent: any;
+
+    if (hasImages) {
+      // Multimodal: text + image(s)
+      const parts: any[] = [];
+
+      // Add text part
+      const textContent = code
+        ? (question
+            ? `Here is the code/design:\n\n\`\`\`\n${code}\n\`\`\`\n\nQuestion: ${question}`
+            : `Review this UI design:\n\n${code}`)
+        : (question || "Please analyze these UI screenshots and provide detailed UI/UX feedback including layout, typography, color usage, accessibility, and interaction patterns.");
+
+      parts.push({ type: "text", text: textContent });
+
+      // Add image parts
+      for (const dataUrl of images) {
+        // dataUrl format: "data:image/png;base64,..."
+        const match = dataUrl.match(/^data:(image\/[^;]+);base64,(.+)$/);
+        if (match) {
+          parts.push({
+            type: "image_url",
+            image_url: { url: dataUrl },
+          });
+        }
+      }
+
+      userContent = parts;
     } else {
-      userMessage = `Analyze this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
+      // Text-only (existing behavior)
+      let userMessage: string;
+      if (question) {
+        userMessage = `Here is the codebase:\n\n\`\`\`\n${code}\n\`\`\`\n\nQuestion: ${question}`;
+      } else if (mode === "pr_diff") {
+        userMessage = `Review this Pull Request:\n\n${code}`;
+      } else if (mode === "multi_repo") {
+        userMessage = `Analyze these repositories together as a system:\n\n${code}`;
+      } else if (mode === "test_generation") {
+        userMessage = `Generate comprehensive tests for this code:\n\n\`\`\`\n${code}\n\`\`\``;
+      } else if (mode === "debugging") {
+        userMessage = `Debug this code — find all bugs and potential issues:\n\n\`\`\`\n${code}\n\`\`\``;
+      } else if (mode === "refactoring") {
+        userMessage = `Provide refactoring suggestions for this code:\n\n\`\`\`\n${code}\n\`\`\``;
+      } else if (mode === "documentation") {
+        userMessage = `Generate comprehensive, production-grade documentation for this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
+      } else if (mode === "uiux_review") {
+        userMessage = `Review this frontend code or design specification and provide UI/UX design feedback:\n\n\`\`\`\n${code}\n\`\`\``;
+      } else {
+        userMessage = `Analyze this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
+      }
+      userContent = userMessage;
     }
+
+    // Use a vision-capable model when images are present
+    const model = hasImages ? "google/gemini-2.5-flash" : "google/gemini-3-flash-preview";
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -498,10 +534,10 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model,
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage },
+          { role: "user", content: userContent },
         ],
         stream: true,
       }),
