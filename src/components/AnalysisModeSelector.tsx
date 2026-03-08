@@ -1,6 +1,6 @@
 import {
   Shield, Zap, CheckCircle, Building2, GitPullRequest,
-  Route, Bug, GitCompare, FlaskConical, Network, Brain, Wrench, Layers, FileText,
+  Route, Bug, GitCompare, FlaskConical, Network, Brain, Wrench, Layers, FileText, Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
