@@ -176,8 +176,8 @@ const Index = () => {
             <span className="text-primary">in seconds</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            13 AI-powered analysis modes: architecture, security, debugging, documentation,
-            test generation, refactoring, PR review, multi-repo understanding, and more.
+            14 AI-powered analysis modes: architecture, security, debugging, documentation,
+            test generation, refactoring, UI/UX review, PR review, multi-repo, and more.
           </p>
         </div>
 
@@ -272,8 +272,8 @@ const Index = () => {
               { title: "AI Debugging", description: "Find bugs & edge cases", icon: "🐛" },
               { title: "Test Generation", description: "Auto-generate test suites", icon: "🧪" },
               { title: "Refactoring", description: "AI-powered improvement suggestions", icon: "🔧" },
+              { title: "UI/UX Review", description: "Design feedback & accessibility", icon: "🎨" },
               { title: "Impact Analysis", description: "Change blast radius mapping", icon: "💥" },
-              { title: "Multi-Repo", description: "Cross-repository understanding", icon: "📦" },
             ].map((feature) => (
               <div
                 key={feature.title}
