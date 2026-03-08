@@ -384,6 +384,7 @@ codelens-ai/
 │   │   ├── GitHubInput.tsx          # GitHub repo URL input with parsed preview
 │   │   ├── PRInput.tsx              # Pull Request URL input with parsed preview
 │   │   ├── MultiRepoInput.tsx       # Multi-repository URL input (2-5 repos)
+│   │   ├── FigmaInput.tsx           # Figma link or paste/upload input for UI/UX review
 │   │   ├── ExampleSnippets.tsx      # Pre-built code examples for quick start
 │   │   ├── FollowUpInput.tsx        # Follow-up question input after analysis
 │   │   ├── HistoryPanel.tsx         # Sliding panel with searchable history
