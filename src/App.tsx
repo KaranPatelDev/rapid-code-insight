@@ -15,6 +15,8 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const SharedAnalysis = lazy(() => import("./pages/SharedAnalysis"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Widget = lazy(() => import("./pages/Widget"));
+const Bookmarklet = lazy(() => import("./pages/Bookmarklet"));
 
 const Loading = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
