@@ -1,6 +1,6 @@
 # CodeLens AI — Documentation
 
-> **AI-powered code analysis platform** with 14 specialized modes including architecture visualization, security scanning, AI debugging, documentation generation, UI/UX review, PR review, and multi-repository understanding.
+> **AI-powered code analysis platform** with 14 specialized modes including architecture visualization, security scanning, AI debugging, documentation generation, UI/UX review, UI/UX review, PR review, and multi-repository understanding.
 
 **Live URL**: [https://rapid-code-insight.lovable.app](https://rapid-code-insight.lovable.app)
 
@@ -50,7 +50,7 @@
 
 ## Overview
 
-CodeLens AI is a web application that lets developers paste code, connect GitHub repositories, or submit Pull Request URLs — and instantly receive AI-powered analysis across 13 specialized modes. Results include rich markdown with inline Mermaid diagrams, syntax-highlighted code blocks, and actionable insights.
+CodeLens AI is a web application that lets developers paste code, connect GitHub submit Pull Request URLs, or provide Figma designs — and instantly receive AI-powered analysis across 14ysis across 13 specialized modes. Results include rich markdown with inline Mermaid diagrams, syntax-highlighted code blocks, and actionable insights.
 
 ### Key Capabilities
 
