@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserMenu } from "@/components/UserMenu";
@@ -7,6 +8,7 @@ import {
   CheckCircle, FileText, BarChart3, History, Share2, Moon, Sun, Download,
   MessageSquare, Search, KeyRound,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const sections = [
   { id: "getting-started", label: "Getting Started" },
@@ -26,21 +28,68 @@ const sections = [
   { id: "faq", label: "FAQ" },
 ];
 
+function useActiveSection(sectionIds: string[]) {
+  const [active, setActive] = useState(sectionIds[0]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length > 0) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-80px 0px -60% 0px", threshold: 0 }
+    );
+
+    for (const id of sectionIds) {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    }
+
+    return () => observer.disconnect();
+  }, [sectionIds]);
+
+  return active;
+}
+
 function SectionNav() {
+  const activeId = useActiveSection(sections.map((s) => s.id));
+
+  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.history.replaceState(null, "", `#${id}`);
+    }
+  }, []);
+
   return (
     <nav className="hidden lg:block sticky top-20 w-56 shrink-0">
       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">On this page</p>
-      <ul className="space-y-1 border-l border-border/50">
-        {sections.map((s) => (
-          <li key={s.id}>
-            <a
-              href={`#${s.id}`}
-              className="block pl-4 py-1 text-sm text-muted-foreground hover:text-foreground hover:border-l-2 hover:border-primary transition-colors -ml-px"
-            >
-              {s.label}
-            </a>
-          </li>
-        ))}
+      <ul className="space-y-0.5 border-l border-border/50">
+        {sections.map((s) => {
+          const isActive = activeId === s.id;
+          return (
+            <li key={s.id}>
+              <a
+                href={`#${s.id}`}
+                onClick={(e) => handleClick(e, s.id)}
+                className={cn(
+                  "block pl-4 py-1.5 text-sm transition-all duration-200 -ml-px border-l-2",
+                  isActive
+                    ? "border-primary text-primary font-medium"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                )}
+              >
+                {s.label}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
