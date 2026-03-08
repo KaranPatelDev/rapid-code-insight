@@ -38,6 +38,10 @@ const Index = () => {
   const { canAnalyze, refresh: refreshUsage } = useUsage();
 
   const handleAnalyze = useCallback(async (code: string, question?: string, images?: string[]) => {
+    if (!canAnalyze) {
+      setUpgradeFeature("More Analyses");
+      return;
+    }
     setOutput("");
     setIsLoading(true);
     codeRef.current = code;
