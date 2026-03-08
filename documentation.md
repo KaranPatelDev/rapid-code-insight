@@ -378,7 +378,7 @@ codelens-ai/
 │   │   └── NotFound.tsx             # 404 page
 │   │
 │   ├── components/                  # Reusable UI components
-│   │   ├── AnalysisModeSelector.tsx # 13-mode grid selector
+│   │   ├── AnalysisModeSelector.tsx # 14-mode grid selector
 │   │   ├── AnalysisOutput.tsx       # Markdown renderer with Mermaid + syntax highlighting
 │   │   ├── CodeInput.tsx            # Code paste textarea with submit
 │   │   ├── GitHubInput.tsx          # GitHub repo URL input with parsed preview
