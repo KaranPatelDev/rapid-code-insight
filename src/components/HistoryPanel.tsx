@@ -19,9 +19,17 @@ const sourceIcons = {
 
 const modeLabels: Record<string, string> = {
   architecture: "Architecture",
+  request_flow: "Request Flow",
   security: "Security",
   performance: "Performance",
   best_practices: "Best Practices",
+  debugging: "AI Debug",
+  impact_analysis: "Impact",
+  test_generation: "Test Gen",
+  refactoring: "Refactoring",
+  knowledge_graph: "Knowledge",
+  multi_repo: "Multi-Repo",
+  pr_diff: "PR Review",
 };
 
 export function HistoryPanel({ onSelect }: HistoryPanelProps) {
