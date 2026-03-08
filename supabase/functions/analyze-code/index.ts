@@ -9,7 +9,7 @@ const corsHeaders = {
 
 // --- Config ---
 const MAX_CODE_SIZE = 500_000; // 500KB
-const DAILY_LIMIT = 50; // analyses per user per day
+const PLAN_LIMITS: Record<string, number> = { free: 5, pro: 50, team: 0 }; // 0 = unlimited
 const RATE_LIMIT_WINDOW_MS = 10_000; // 10 seconds
 const RATE_LIMIT_MAX = 3; // max requests per window
 
