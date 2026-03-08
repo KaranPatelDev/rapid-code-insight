@@ -10,6 +10,7 @@ const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ defaul
 const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
 
 const Index = lazy(() => import("./pages/Index"));
+const Landing = lazy(() => import("./pages/Landing"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Guide = lazy(() => import("./pages/Guide"));
 const Auth = lazy(() => import("./pages/Auth"));
