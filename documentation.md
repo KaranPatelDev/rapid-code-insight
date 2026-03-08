@@ -71,7 +71,7 @@ CodeLens AI is a web application that lets developers paste code, connect GitHub
 
 ## Features
 
-### Analysis Modes (13 total)
+### Analysis Modes (14 total)
 
 | Category | Mode | Description |
 |---|---|---|
@@ -88,6 +88,7 @@ CodeLens AI is a web application that lets developers paste code, connect GitHub
 | **Improve** | Test Generation | Generate unit, integration, and component tests |
 | **Improve** | Documentation | Production-grade markdown docs with diagrams |
 | **Review** | PR Review | Diff analysis with verdict and regression detection |
+| **Review** | UI/UX Review | Design feedback, accessibility, visual hierarchy analysis |
 
 ---
 
