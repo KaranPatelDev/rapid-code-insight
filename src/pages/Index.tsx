@@ -20,28 +20,14 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import { Braces, BarChart3, BookOpen, Puzzle, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-function ProBadge({ feature }: { feature: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-        <Lock className="h-5 w-5 text-primary" />
-      </div>
-      <div>
-        <p className="font-semibold text-sm">{feature} requires Pro</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Upgrade to Pro or Team to unlock this feature.
-        </p>
-      </div>
-    </div>
-  );
-}
+import { UpgradeModal } from "@/components/UpgradeModal";
 
 const Index = () => {
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("paste");
   const [mode, setMode] = useState<AnalysisMode>("architecture");
+  const [upgradeFeature, setUpgradeFeature] = useState<string | null>(null);
   const codeRef = useRef("");
   const questionRef = useRef<string | undefined>();
   const sourceRef = useRef<"paste" | "github" | "file" | "example">("paste");
@@ -137,9 +123,17 @@ const Index = () => {
 
   const handleModeChange = (newMode: AnalysisMode) => {
     setMode(newMode);
+    if (!hasPRReview && newMode === "pr_diff") { setUpgradeFeature("PR Review"); return; }
+    if (!hasMultiRepo && newMode === "multi_repo") { setUpgradeFeature("Multi-Repo Analysis"); return; }
     if (newMode === "pr_diff") setActiveTab("pr");
     else if (newMode === "multi_repo") setActiveTab("multi");
     else if (activeTab === "pr" || activeTab === "multi") setActiveTab("paste");
+  };
+
+  const handleTabChange = (tab: string) => {
+    if (!hasPRReview && tab === "pr") { setUpgradeFeature("PR Review"); return; }
+    if (!hasMultiRepo && tab === "multi") { setUpgradeFeature("Multi-Repo Analysis"); return; }
+    setActiveTab(tab);
   };
 
   const showExamples = !["pr_diff", "multi_repo"].includes(mode);
@@ -201,7 +195,7 @@ const Index = () => {
         )}
 
         <div className="bg-card border border-border/50 rounded-xl p-6 glow-primary">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="mb-4 bg-muted/50">
               <TabsTrigger value="paste" className="text-xs">Paste Code</TabsTrigger>
               <TabsTrigger value="github" className="text-xs">GitHub Repo</TabsTrigger>
@@ -226,21 +220,19 @@ const Index = () => {
               </div>
             </TabsContent>
             <TabsContent value="pr">
-              {hasPRReview ? (
-                <PRInput onDiffFetched={handlePRFetch} isLoading={isLoading} />
-              ) : (
-                <ProBadge feature="PR Review" />
-              )}
+              <PRInput onDiffFetched={handlePRFetch} isLoading={isLoading} />
             </TabsContent>
             <TabsContent value="multi">
-              {hasMultiRepo ? (
-                <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
-              ) : (
-                <ProBadge feature="Multi-Repo Analysis" />
-              )}
+              <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
             </TabsContent>
           </Tabs>
         </div>
+
+        <UpgradeModal
+          open={!!upgradeFeature}
+          onOpenChange={(open) => !open && setUpgradeFeature(null)}
+          feature={upgradeFeature ?? ""}
+        />
 
         <AnalysisOutput
           content={output}
