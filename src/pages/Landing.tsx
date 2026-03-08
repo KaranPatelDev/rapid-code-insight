@@ -481,7 +481,7 @@ const Landing = () => {
             <a href="#how-to-use" className="hover:text-foreground transition-colors">How to Use</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
           </div>
-          <span>© {new Date().getFullYear()} CodeLens AI · Built by Karan</span>
+          <span>© {new Date().getFullYear()} CodeLens AI · Built with Lovable</span>
         </div>
       </footer>
     </div>
