@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { owner, repo, token, token } = await req.json();
+    const { owner, repo, token, token, token } = await req.json();
     if (!owner || !repo) {
       return new Response(
         JSON.stringify({ error: "owner and repo are required" }),
@@ -21,7 +21,7 @@ serve(async (req) => {
     // Fetch repo tree using GitHub API (public repos, no auth needed)
     const treeResp = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`,
-      { headers: { Accept: "application/vnd.github.v3+json", "User-Agent": "CodeL, ...(token ? { Authorization: `Bearer ${token}` } : {})ens-AI" } }
+      { headers: { Accept: "application/vnd.github.v3+json", "User-Agent":, ...(token ? { Authorization: `Bearer ${token}` } : {}) "CodeL, ...(token ? { Authorization: `Bearer ${token}` } : {})ens-AI" } }
     );
 
     if (!treeResp.ok) {
