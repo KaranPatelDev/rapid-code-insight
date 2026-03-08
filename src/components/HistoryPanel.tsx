@@ -30,6 +30,7 @@ const modeLabels: Record<string, string> = {
   knowledge_graph: "Knowledge",
   multi_repo: "Multi-Repo",
   pr_diff: "PR Review",
+  documentation: "Documentation",
 };
 
 export function HistoryPanel({ onSelect }: HistoryPanelProps) {

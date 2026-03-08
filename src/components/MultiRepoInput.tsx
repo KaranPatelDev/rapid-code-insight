@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Layers, Loader2, KeyRound, Plus, X } from "lucide-react";
+import { Layers, Loader2, KeyRound, Plus, X, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface MultiRepoInputProps {
@@ -31,6 +31,10 @@ export function MultiRepoInput({ onCodeFetched, isLoading }: MultiRepoInputProps
     if (shortMatch) return { owner: shortMatch[1], repo: shortMatch[2] };
     return null;
   };
+
+  const parsedRepos = useMemo(() => {
+    return repos.map((r) => (r.trim() ? parseGitHubUrl(r) : null));
+  }, [repos]);
 
   const addRepo = () => {
     if (repos.length < 5) setRepos([...repos, ""]);
@@ -88,20 +92,33 @@ export function MultiRepoInput({ onCodeFetched, isLoading }: MultiRepoInputProps
         Enter 2-5 GitHub repository URLs to analyze how they relate, share patterns, or interact.
       </p>
       {repos.map((repo, idx) => (
-        <div key={idx} className="flex gap-2">
-          <div className="relative flex-1">
-            <Layers className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              value={repo}
-              onChange={(e) => updateRepo(idx, e.target.value)}
-              placeholder={`Repo ${idx + 1}: owner/repo or https://github.com/...`}
-              className="pl-10 bg-card border-border/50"
-            />
+        <div key={idx} className="space-y-1">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Layers className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={repo}
+                onChange={(e) => updateRepo(idx, e.target.value)}
+                placeholder={`Repo ${idx + 1}: owner/repo or https://github.com/...`}
+                className="pl-10 bg-card border-border/50"
+              />
+            </div>
+            {repos.length > 2 && (
+              <Button variant="ghost" size="icon" onClick={() => removeRepo(idx)} className="shrink-0 text-muted-foreground hover:text-destructive">
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
-          {repos.length > 2 && (
-            <Button variant="ghost" size="icon" onClick={() => removeRepo(idx)} className="shrink-0 text-muted-foreground hover:text-destructive">
-              <X className="h-4 w-4" />
-            </Button>
+          {repo.trim() && parsedRepos[idx] && (
+            <div className="flex items-center gap-1.5 text-xs text-primary ml-1">
+              <CheckCircle2 className="h-3 w-3" />
+              <span className="font-mono">{parsedRepos[idx]!.owner}/{parsedRepos[idx]!.repo}</span>
+            </div>
+          )}
+          {repo.trim() && !parsedRepos[idx] && (
+            <p className="text-xs text-destructive/80 ml-1">
+              Invalid — use <span className="font-mono">owner/repo</span> or full GitHub URL
+            </p>
           )}
         </div>
       ))}

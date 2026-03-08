@@ -32,6 +32,7 @@ const MODE_COLORS: Record<string, string> = {
   knowledge_graph: "hsl(260, 50%, 60%)",
   multi_repo: "hsl(210, 60%, 55%)",
   pr_diff: "hsl(280, 60%, 60%)",
+  documentation: "hsl(90, 60%, 45%)",
 };
 
 const MODE_LABELS: Record<string, string> = {
@@ -47,6 +48,7 @@ const MODE_LABELS: Record<string, string> = {
   knowledge_graph: "Knowledge",
   multi_repo: "Multi-Repo",
   pr_diff: "PR Review",
+  documentation: "Documentation",
 };
 
 const MODE_ICONS: Record<string, typeof Building2> = {
