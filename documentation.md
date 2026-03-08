@@ -497,6 +497,24 @@ codelens-ai/
 
 ---
 
+## Landing Page
+
+The landing page (`src/pages/Landing.tsx`) is shown to signed-out visitors at `/`. It uses `framer-motion` for scroll-triggered animations and includes:
+
+1. **Hero** — Headline, subheadline, CTAs ("Start Analyzing" + "Read the Guide"), and a radial gradient background.
+2. **Features** — 8-card grid showcasing key analysis capabilities with staggered fade-in animations.
+3. **Testimonials** — 3 testimonial cards with star ratings and avatars.
+4. **How to Use** — 3-step guide (Input → Choose Mode → Get Insights) with detail lists and a full feature-by-plan comparison table.
+5. **Pricing** — 3-tier pricing cards (Free / Pro / Team) with the Pro tier highlighted as "Most Popular."
+6. **CTA** — Final call-to-action with "Get Started Free" button.
+7. **Footer** — Logo, nav links (Guide, Features, How to Use, Pricing), copyright.
+
+The nav bar includes links to Features, How to Use, and Pricing sections (smooth scroll anchors).
+
+Authenticated users are redirected to the main analysis page (`Index.tsx`) via the `HomeRoute` component in `App.tsx`.
+
+---
+
 ## User Guide
 
 ### Getting Started
