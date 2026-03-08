@@ -1,14 +1,55 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { ShareButton } from "@/components/ShareButton";
+import hljs from "highlight.js/lib/core";
+import javascript from "highlight.js/lib/languages/javascript";
+import typescript from "highlight.js/lib/languages/typescript";
+import python from "highlight.js/lib/languages/python";
+import rust from "highlight.js/lib/languages/rust";
+import go from "highlight.js/lib/languages/go";
+import java from "highlight.js/lib/languages/java";
+import sql from "highlight.js/lib/languages/sql";
+import css from "highlight.js/lib/languages/css";
+import xml from "highlight.js/lib/languages/xml";
+import json from "highlight.js/lib/languages/json";
+import bash from "highlight.js/lib/languages/bash";
+import yaml from "highlight.js/lib/languages/yaml";
+
+hljs.registerLanguage("javascript", javascript);
+hljs.registerLanguage("js", javascript);
+hljs.registerLanguage("jsx", javascript);
+hljs.registerLanguage("typescript", typescript);
+hljs.registerLanguage("ts", typescript);
+hljs.registerLanguage("tsx", typescript);
+hljs.registerLanguage("python", python);
+hljs.registerLanguage("py", python);
+hljs.registerLanguage("rust", rust);
+hljs.registerLanguage("rs", rust);
+hljs.registerLanguage("go", go);
+hljs.registerLanguage("java", java);
+hljs.registerLanguage("sql", sql);
+hljs.registerLanguage("css", css);
+hljs.registerLanguage("html", xml);
+hljs.registerLanguage("xml", xml);
+hljs.registerLanguage("json", json);
+hljs.registerLanguage("bash", bash);
+hljs.registerLanguage("sh", bash);
+hljs.registerLanguage("yaml", yaml);
+hljs.registerLanguage("yml", yaml);
 
 interface AnalysisOutputProps {
   content: string;
   isStreaming: boolean;
+  shareData?: {
+    title: string;
+    code: string;
+    question?: string;
+    source: string;
+  };
 }
 
-export function AnalysisOutput({ content, isStreaming }: AnalysisOutputProps) {
+export function AnalysisOutput({ content, isStreaming, shareData }: AnalysisOutputProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -35,12 +76,23 @@ export function AnalysisOutput({ content, isStreaming }: AnalysisOutputProps) {
             {isStreaming ? "Analyzing..." : "Analysis Complete"}
           </span>
         </div>
-        {content && (
-          <Button variant="ghost" size="sm" onClick={handleCopy} className="text-muted-foreground hover:text-foreground">
-            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            <span className="ml-1 text-xs">{copied ? "Copied" : "Copy"}</span>
-          </Button>
-        )}
+        <div className="flex items-center gap-1">
+          {content && !isStreaming && shareData && (
+            <ShareButton
+              title={shareData.title}
+              code={shareData.code}
+              question={shareData.question}
+              output={content}
+              source={shareData.source}
+            />
+          )}
+          {content && (
+            <Button variant="ghost" size="sm" onClick={handleCopy} className="text-muted-foreground hover:text-foreground">
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              <span className="ml-1 text-xs">{copied ? "Copied" : "Copy"}</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       <div
@@ -54,8 +106,37 @@ export function AnalysisOutput({ content, isStreaming }: AnalysisOutputProps) {
   );
 }
 
+function HighlightedCode({ code, lang }: { code: string; lang: string }) {
+  const codeRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (codeRef.current) {
+      try {
+        if (lang && hljs.getLanguage(lang)) {
+          codeRef.current.innerHTML = hljs.highlight(code, { language: lang }).value;
+        } else {
+          const result = hljs.highlightAuto(code);
+          codeRef.current.innerHTML = result.value;
+        }
+      } catch {
+        codeRef.current.textContent = code;
+      }
+    }
+  }, [code, lang]);
+
+  return (
+    <pre className="bg-[hsl(var(--code-bg))] text-[hsl(var(--code-foreground))] p-4 rounded-lg overflow-x-auto text-sm border border-border/30 relative group">
+      {lang && (
+        <span className="absolute top-2 right-2 text-[10px] font-mono text-muted-foreground opacity-60">
+          {lang}
+        </span>
+      )}
+      <code ref={codeRef} className="hljs">{code}</code>
+    </pre>
+  );
+}
+
 function MarkdownRenderer({ content }: { content: string }) {
-  // Simple markdown rendering
   const lines = content.split("\n");
   const elements: JSX.Element[] = [];
   let inCodeBlock = false;
@@ -66,16 +147,12 @@ function MarkdownRenderer({ content }: { content: string }) {
   for (const line of lines) {
     if (line.startsWith("```")) {
       if (inCodeBlock) {
-        elements.push(
-          <pre key={key++} className="bg-[hsl(var(--code-bg))] text-[hsl(var(--code-foreground))] p-4 rounded-lg overflow-x-auto text-sm border border-border/30">
-            <code>{codeContent}</code>
-          </pre>
-        );
+        elements.push(<HighlightedCode key={key++} code={codeContent} lang={codeLang} />);
         codeContent = "";
         inCodeBlock = false;
       } else {
         inCodeBlock = true;
-        codeLang = line.slice(3);
+        codeLang = line.slice(3).trim();
       }
       continue;
     }
@@ -112,18 +189,13 @@ function MarkdownRenderer({ content }: { content: string }) {
   }
 
   if (inCodeBlock && codeContent) {
-    elements.push(
-      <pre key={key++} className="bg-[hsl(var(--code-bg))] text-[hsl(var(--code-foreground))] p-4 rounded-lg overflow-x-auto text-sm border border-border/30">
-        <code>{codeContent}</code>
-      </pre>
-    );
+    elements.push(<HighlightedCode key={key++} code={codeContent} lang={codeLang} />);
   }
 
   return <>{elements}</>;
 }
 
 function InlineMarkdown({ text }: { text: string }) {
-  // Handle inline code and bold
   const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
   return (
     <>

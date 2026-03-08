@@ -140,7 +140,16 @@ const Index = () => {
         </div>
 
         {/* Output */}
-        <AnalysisOutput content={output} isStreaming={isLoading} />
+        <AnalysisOutput
+          content={output}
+          isStreaming={isLoading}
+          shareData={output && !isLoading ? {
+            title: generateTitle(codeRef.current, questionRef.current),
+            code: codeRef.current,
+            question: questionRef.current,
+            source: sourceRef.current,
+          } : undefined}
+        />
 
         {/* Features */}
         {!output && !isLoading && (
