@@ -27,6 +27,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("paste");
   const [mode, setMode] = useState<AnalysisMode>("architecture");
+  const [upgradeFeature, setUpgradeFeature] = useState<string | null>(null);
   const codeRef = useRef("");
   const questionRef = useRef<string | undefined>();
   const sourceRef = useRef<"paste" | "github" | "file" | "example">("paste");
