@@ -98,7 +98,13 @@ export function AnalysisOutput({ content, isStreaming, mode, shareData }: Analys
           </span>
         </div>
         <div className="flex items-center gap-1">
-          {content && !isStreaming && (
+          {content && !isStreaming && isDocMode && (
+            <Button variant="default" size="sm" onClick={handleExportMarkdown} className="gap-1.5">
+              <Download className="h-3.5 w-3.5" />
+              <span className="text-xs">Download .md</span>
+            </Button>
+          )}
+          {content && !isStreaming && !isDocMode && (
             <Button variant="ghost" size="sm" onClick={handleExportMarkdown} className="text-muted-foreground hover:text-foreground">
               <Download className="h-3.5 w-3.5" />
               <span className="ml-1 text-xs">Export</span>
