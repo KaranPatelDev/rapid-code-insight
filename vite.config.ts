@@ -12,6 +12,24 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Merge tiny shared components into the main chunk to reduce chain depth
+          if (
+            id.includes("src/components/SEOHead") ||
+            id.includes("src/components/ThemeToggle") ||
+            id.includes("src/components/ErrorBoundary") ||
+            id.includes("lucide-react/dist/esm/icons/loader-circle") ||
+            id.includes("src/components/ui/input.tsx")
+          ) {
+            return undefined; // bundle with importer, not separate chunk
+          }
+        },
+      },
+    },
+  },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
