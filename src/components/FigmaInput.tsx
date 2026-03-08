@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Figma, Upload, Link, Sparkles, Image, X } from "lucide-react";
+import { Figma, Upload, Link, Sparkle, Clipboards, Image, X } from "lucide-react";
 
 interface FigmaInputProps {
   onSubmit: (content: string, question?: string, images?: string[]) => void;
