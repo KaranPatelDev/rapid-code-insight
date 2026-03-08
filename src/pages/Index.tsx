@@ -85,7 +85,7 @@ const Index = () => {
       toast.error("Failed to connect to analysis service.");
       setIsLoading(false);
     }
-  }, [mode, user, hasHistory]);
+  }, [mode, user, hasHistory, canAnalyze, refreshUsage]);
 
   const handleExampleSelect = (code: string) => {
     sourceRef.current = "example";

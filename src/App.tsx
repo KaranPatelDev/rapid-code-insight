@@ -70,6 +70,7 @@ const App = () => (
                   <Route path="/s/:shortId" element={<SharedAnalysis />} />
                   <Route path="/widget" element={<Widget />} />
                   <Route path="/bookmarklet" element={<Bookmarklet />} />
+                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
