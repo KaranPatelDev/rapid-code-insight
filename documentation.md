@@ -30,6 +30,7 @@
   - [Analyzing a GitHub Repository](#analyzing-a-github-repository)
   - [Reviewing a Pull Request](#reviewing-a-pull-request)
   - [Multi-Repository Analysis](#multi-repository-analysis)
+  - [UI/UX Design Review](#uiux-design-review)
   - [Generating Documentation](#generating-documentation)
   - [Follow-Up Questions](#follow-up-questions)
   - [Sharing Analyses](#sharing-analyses)
