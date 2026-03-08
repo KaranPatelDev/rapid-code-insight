@@ -18,7 +18,8 @@ export type AnalysisMode =
   | "knowledge_graph"
   | "multi_repo"
   | "pr_diff"
-  | "documentation";
+  | "documentation"
+  | "uiux_review";
 
 interface AnalysisModeSelectorProps {
   value: AnalysisMode;
