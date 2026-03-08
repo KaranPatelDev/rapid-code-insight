@@ -154,18 +154,31 @@ const Landing = () => {
       {/* Features */}
       <section id="features" className="py-24 border-t border-border/30">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeUp}
+          >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
               Everything you need to understand code
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               From security audits to architecture diagrams — 13 modes built for real engineering workflows.
             </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
             {features.map((f) => (
-              <div
+              <motion.div
                 key={f.title}
+                variants={fadeIn}
                 className="group bg-card border border-border/50 rounded-xl p-5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
               >
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -173,27 +186,40 @@ const Landing = () => {
                 </div>
                 <h3 className="font-semibold mb-1.5">{f.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Testimonials */}
       <section className="py-24 bg-muted/30 border-t border-border/30">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeUp}
+          >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
               Trusted by engineers worldwide
             </h2>
             <p className="text-muted-foreground text-lg">
               See what developers are saying about CodeLens AI.
             </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
             {testimonials.map((t) => (
-              <div
+              <motion.div
                 key={t.name}
+                variants={fadeIn}
                 className="bg-card border border-border/50 rounded-xl p-6 flex flex-col"
               >
                 <div className="flex gap-1 mb-4">
@@ -211,27 +237,40 @@ const Landing = () => {
                     <p className="text-xs text-muted-foreground">{t.role}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Pricing */}
       <section id="pricing" className="py-24 border-t border-border/30">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeUp}
+          >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
               Simple, transparent pricing
             </h2>
             <p className="text-muted-foreground text-lg">
               Start free. Upgrade when you need more power.
             </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
             {plans.map((plan) => (
-              <div
+              <motion.div
                 key={plan.name}
+                variants={fadeIn}
                 className={`bg-card border rounded-xl p-6 flex flex-col relative ${
                   plan.highlighted
                     ? "border-primary shadow-xl shadow-primary/10 scale-[1.02]"
@@ -264,15 +303,21 @@ const Landing = () => {
                     {plan.cta}
                   </Button>
                 </Link>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-24 border-t border-border/30">
-        <div className="max-w-3xl mx-auto px-4 text-center">
+        <motion.div
+          className="max-w-3xl mx-auto px-4 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeUp}
+        >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
             Ready to understand your code better?
           </h2>
@@ -284,7 +329,7 @@ const Landing = () => {
               Get Started Free <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-        </div>
+        </motion.div>
       </section>
 
       {/* Footer */}
