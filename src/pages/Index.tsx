@@ -61,6 +61,7 @@ const Index = () => {
         },
         onDone: () => {
           setIsLoading(false);
+          refreshUsage();
           if (fullOutput.length > 20 && user && hasHistory) {
             addToHistory(
               {
