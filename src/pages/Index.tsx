@@ -14,7 +14,7 @@ import { AnalysisModeSelector, AnalysisMode } from "@/components/AnalysisModeSel
 import { streamAnalysis } from "@/lib/streaming";
 import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
 import { useAuth } from "@/hooks/useAuth";
-import { Braces, BarChart3 } from "lucide-react";
+import { Braces, BarChart3, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -136,6 +136,9 @@ const Index = () => {
             <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">AI</span>
           </div>
           <div className="flex items-center gap-1">
+            <Link to="/guide" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 mr-1 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
+              <BookOpen className="h-3.5 w-3.5" /> Guide
+            </Link>
             <Link to="/dashboard" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 mr-1 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
               <BarChart3 className="h-3.5 w-3.5" /> Stats
             </Link>
