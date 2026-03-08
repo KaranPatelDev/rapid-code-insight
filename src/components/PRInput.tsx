@@ -17,7 +17,9 @@ export function PRInput({ onDiffFetched, isLoading }: PRInputProps) {
   const [error, setError] = useState("");
 
   const parsePRUrl = (input: string): { owner: string; repo: string; pr: string } | null => {
-    const match = input.trim().match(/github\.com\/([^\/]+)\/([^\/]+)\/pull\/(\d+)/);
+    let cleaned = input.trim();
+    if (cleaned.startsWith("github.com")) cleaned = "https://" + cleaned;
+    const match = cleaned.match(/github\.com\/([^\/]+)\/([^\/]+)\/pull\/(\d+)/);
     if (match) return { owner: match[1], repo: match[2], pr: match[3] };
     return null;
   };
