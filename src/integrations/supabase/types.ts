@@ -50,6 +50,30 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_usage: {
+        Row: {
+          analysis_count: number
+          created_at: string
+          id: string
+          usage_date: string
+          user_id: string
+        }
+        Insert: {
+          analysis_count?: number
+          created_at?: string
+          id?: string
+          usage_date?: string
+          user_id: string
+        }
+        Update: {
+          analysis_count?: number
+          created_at?: string
+          id?: string
+          usage_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
