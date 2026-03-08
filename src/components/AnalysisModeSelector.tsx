@@ -39,6 +39,7 @@ const modes: { id: AnalysisMode; label: string; icon: typeof Shield; description
   { id: "refactoring", label: "Refactoring", icon: Wrench, description: "AI refactor suggestions", category: "Improve" },
   { id: "test_generation", label: "Test Gen", icon: FlaskConical, description: "Generate test cases", category: "Improve" },
   { id: "documentation", label: "Documentation", icon: FileText, description: "Generate full docs", category: "Improve" },
+  { id: "uiux_review", label: "UI/UX Review", icon: Palette, description: "Design feedback", category: "Improve" },
   { id: "pr_diff", label: "PR Review", icon: GitPullRequest, description: "Diff & review", category: "Review" },
 ];
 

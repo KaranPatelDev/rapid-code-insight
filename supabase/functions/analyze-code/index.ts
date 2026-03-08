@@ -478,6 +478,8 @@ serve(async (req) => {
       userMessage = `Provide refactoring suggestions for this code:\n\n\`\`\`\n${code}\n\`\`\``;
     } else if (mode === "documentation") {
       userMessage = `Generate comprehensive, production-grade documentation for this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
+    } else if (mode === "uiux_review") {
+      userMessage = `Review this frontend code or design specification and provide UI/UX design feedback:\n\n\`\`\`\n${code}\n\`\`\``;
     } else {
       userMessage = `Analyze this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
     }

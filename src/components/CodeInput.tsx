@@ -23,7 +23,7 @@ export function CodeInput({ onSubmit, isLoading }: CodeInputProps) {
 
   const processFiles = useCallback(async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
-    const textExtensions = /\.(ts|tsx|js|jsx|py|rs|go|java|rb|php|css|html|json|yaml|yml|toml|md|txt|sql|sh|bash|c|cpp|h|hpp|cs|swift|kt|scala|vue|svelte|astro|prisma|graphql|gql|env|dockerfile|makefile|xml|csv|ini|cfg|conf|gitignore|editorconfig|prettierrc|eslintrc|fig|sketch|xd)$/i;
+    const textExtensions = /\.(ts|tsx|js|jsx|py|rs|go|java|rb|php|css|html|json|yaml|yml|toml|md|txt|sql|sh|bash|c|cpp|h|hpp|cs|swift|kt|scala|vue|svelte|astro|prisma|graphql|gql|env|dockerfile|makefile|xml|csv|ini|cfg|conf|gitignore|editorconfig|prettierrc|eslintrc|fig|sketch|xd|fig|sketch|xd)$/i;
     
     const results: string[] = [];
 
@@ -131,7 +131,7 @@ export function CodeInput({ onSubmit, isLoading }: CodeInputProps) {
               type="file"
               className="hidden"
               multiple
-              accept=".ts,.tsx,.js,.jsx,.py,.rs,.go,.java,.rb,.php,.css,.html,.json,.yaml,.yml,.toml,.md,.txt,.sql,.sh,.c,.cpp,.h,.cs,.swift,.kt,.vue,.svelte,.prisma,.graphql,.xml,.csv"
+              accept=".ts,.tsx,.js,.jsx,.py,.rs,.go,.java,.rb,.php,.css,.html,.json,.yaml,.yml,.toml,.md,.txt,.sql,.sh,.c,.cpp,.h,.cs,.swift,.kt,.vue,.svelte,.prisma,.gra,.fig,.sketch,.xdphql,.xml,.csv"
               onChange={handleFileUpload}
             />
           </label>
