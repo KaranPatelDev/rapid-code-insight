@@ -7,6 +7,8 @@ import { ThemeProvider } from "next-themes";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import SharedAnalysis from "./pages/SharedAnalysis";
 import NotFound from "./pages/NotFound";
 
@@ -37,6 +39,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
               <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/s/:shortId" element={<SharedAnalysis />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
