@@ -335,6 +335,8 @@ serve(async (req) => {
       userMessage = `Debug this code — find all bugs and potential issues:\n\n\`\`\`\n${code}\n\`\`\``;
     } else if (mode === "refactoring") {
       userMessage = `Provide refactoring suggestions for this code:\n\n\`\`\`\n${code}\n\`\`\``;
+    } else if (mode === "documentation") {
+      userMessage = `Generate comprehensive, production-grade documentation for this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
     } else {
       userMessage = `Analyze this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
     }
