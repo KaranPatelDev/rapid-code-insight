@@ -372,15 +372,22 @@ serve(async (req) => {
     const { code, question, mode = "architecture", images } = body;
 
     // --- Input validation ---
-    if (!code || typeof code !== "string") {
-      return new Response(JSON.stringify({ error: "Code input is required." }), {
+    const hasImages = Array.isArray(images) && images.length > 0;
+    if ((!code || typeof code !== "string") && !hasImages) {
+      return new Response(JSON.stringify({ error: "Code input or images are required." }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    if (code.length > MAX_CODE_SIZE) {
+    if (code && code.length > MAX_CODE_SIZE) {
       return new Response(JSON.stringify({ error: `Code input too large. Maximum size is ${MAX_CODE_SIZE / 1000}KB.` }), {
         status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (hasImages && images.length > 5) {
+      return new Response(JSON.stringify({ error: "Maximum 5 images allowed." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
