@@ -84,6 +84,8 @@ export function AnalysisOutput({ content, isStreaming, mode, shareData }: Analys
     URL.revokeObjectURL(url);
   };
 
+  const isDocMode = mode === "documentation";
+
   if (!content && !isStreaming) return null;
 
   return (
