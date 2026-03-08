@@ -9,7 +9,7 @@ const corsHeaders = {
 
 // --- Config ---
 const MAX_CODE_SIZE = 500_000; // 500KB
-const DAILY_LIMIT = 50; // analyses per user per day
+const PLAN_LIMITS: Record<string, number> = { free: 5, pro: 50, team: 0 }; // 0 = unlimited
 const RATE_LIMIT_WINDOW_MS = 10_000; // 10 seconds
 const RATE_LIMIT_MAX = 3; // max requests per window
 
@@ -394,6 +394,16 @@ serve(async (req) => {
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
       const today = new Date().toISOString().split("T")[0];
 
+      // Get user's plan
+      const { data: sub } = await supabase
+        .from("subscriptions")
+        .select("plan")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      const plan = sub?.plan || "free";
+      const dailyLimit = PLAN_LIMITS[plan] ?? 5;
+
       const { data: usage } = await supabase
         .from("daily_usage")
         .select("analysis_count")
@@ -403,8 +413,9 @@ serve(async (req) => {
 
       const currentCount = usage?.analysis_count || 0;
 
-      if (currentCount >= DAILY_LIMIT) {
-        return new Response(JSON.stringify({ error: `Daily analysis limit reached (${DAILY_LIMIT}/day). Try again tomorrow.` }), {
+      // dailyLimit === 0 means unlimited
+      if (dailyLimit > 0 && currentCount >= dailyLimit) {
+        return new Response(JSON.stringify({ error: `Daily analysis limit reached (${dailyLimit}/day). Upgrade your plan for more.` }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }

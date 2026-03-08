@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { Zap } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const DAILY_LIMIT = 50;
-
 export function UsageIndicator() {
   const { user } = useAuth();
+  const { dailyLimit, plan } = useUserPlan();
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -24,9 +24,11 @@ export function UsageIndicator() {
 
   if (count === null) return null;
 
-  const remaining = Math.max(0, DAILY_LIMIT - count);
-  const pct = (count / DAILY_LIMIT) * 100;
-  const isLow = remaining <= 10;
+  // Unlimited for team plan
+  const isUnlimited = dailyLimit === 0;
+  const remaining = isUnlimited ? Infinity : Math.max(0, dailyLimit - count);
+  const pct = isUnlimited ? 0 : (count / dailyLimit) * 100;
+  const isLow = !isUnlimited && remaining <= 2;
 
   return (
     <Tooltip>
@@ -35,19 +37,22 @@ export function UsageIndicator() {
           <Zap className={`h-3.5 w-3.5 ${isLow ? "text-destructive" : "text-primary"}`} />
           <div className="flex items-center gap-1.5">
             <span className="font-medium tabular-nums">
-              {count}/{DAILY_LIMIT}
+              {isUnlimited ? `${count} used` : `${count}/${dailyLimit}`}
             </span>
-            <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden hidden sm:block">
-              <div
-                className={`h-full rounded-full transition-all ${isLow ? "bg-destructive" : "bg-primary"}`}
-                style={{ width: `${Math.min(pct, 100)}%` }}
-              />
-            </div>
+            {!isUnlimited && (
+              <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden hidden sm:block">
+                <div
+                  className={`h-full rounded-full transition-all ${isLow ? "bg-destructive" : "bg-primary"}`}
+                  style={{ width: `${Math.min(pct, 100)}%` }}
+                />
+              </div>
+            )}
+            <span className="text-[10px] uppercase font-semibold text-primary/70">{plan}</span>
           </div>
         </div>
       </TooltipTrigger>
       <TooltipContent side="bottom">
-        <p>{remaining} analyses remaining today</p>
+        <p>{isUnlimited ? `${count} analyses used today (unlimited)` : `${remaining} analyses remaining today`}</p>
       </TooltipContent>
     </Tooltip>
   );

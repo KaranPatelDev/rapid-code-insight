@@ -16,9 +16,26 @@ import { AnalysisModeSelector, AnalysisMode } from "@/components/AnalysisModeSel
 import { streamAnalysis } from "@/lib/streaming";
 import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
 import { useAuth } from "@/hooks/useAuth";
-import { Braces, BarChart3, BookOpen, Puzzle } from "lucide-react";
+import { useUserPlan } from "@/hooks/useUserPlan";
+import { Braces, BarChart3, BookOpen, Puzzle, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+function ProBadge({ feature }: { feature: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
+      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+        <Lock className="h-5 w-5 text-primary" />
+      </div>
+      <div>
+        <p className="font-semibold text-sm">{feature} requires Pro</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Upgrade to Pro or Team to unlock this feature.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 const Index = () => {
   const [output, setOutput] = useState("");
@@ -29,6 +46,7 @@ const Index = () => {
   const questionRef = useRef<string | undefined>();
   const sourceRef = useRef<"paste" | "github" | "file" | "example">("paste");
   const { user } = useAuth();
+  const { hasPRReview, hasMultiRepo, hasHistory, hasFollowUp } = useUserPlan();
 
   const handleAnalyze = useCallback(async (code: string, question?: string) => {
     setOutput("");
@@ -49,7 +67,7 @@ const Index = () => {
         },
         onDone: () => {
           setIsLoading(false);
-          if (fullOutput.length > 20 && user) {
+          if (fullOutput.length > 20 && user && hasHistory) {
             addToHistory(
               {
                 title: generateTitle(codeRef.current, questionRef.current),
@@ -72,7 +90,7 @@ const Index = () => {
       toast.error("Failed to connect to analysis service.");
       setIsLoading(false);
     }
-  }, [mode, user]);
+  }, [mode, user, hasHistory]);
 
   const handleExampleSelect = (code: string) => {
     sourceRef.current = "example";
@@ -149,7 +167,7 @@ const Index = () => {
               <Puzzle className="h-3.5 w-3.5" /> Widget
             </Link>
             <UsageIndicator />
-            <HistoryPanel onSelect={handleHistorySelect} />
+            {hasHistory && <HistoryPanel onSelect={handleHistorySelect} />}
             <ThemeToggle />
             <UserMenu />
           </div>
@@ -187,8 +205,14 @@ const Index = () => {
             <TabsList className="mb-4 bg-muted/50">
               <TabsTrigger value="paste" className="text-xs">Paste Code</TabsTrigger>
               <TabsTrigger value="github" className="text-xs">GitHub Repo</TabsTrigger>
-              <TabsTrigger value="pr" className="text-xs">PR Review</TabsTrigger>
-              <TabsTrigger value="multi" className="text-xs">Multi-Repo</TabsTrigger>
+              <TabsTrigger value="pr" className="text-xs flex items-center gap-1">
+                PR Review
+                {!hasPRReview && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </TabsTrigger>
+              <TabsTrigger value="multi" className="text-xs flex items-center gap-1">
+                Multi-Repo
+                {!hasMultiRepo && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="paste">
               <CodeInput onSubmit={handlePasteSubmit} isLoading={isLoading} />
@@ -202,10 +226,18 @@ const Index = () => {
               </div>
             </TabsContent>
             <TabsContent value="pr">
-              <PRInput onDiffFetched={handlePRFetch} isLoading={isLoading} />
+              {hasPRReview ? (
+                <PRInput onDiffFetched={handlePRFetch} isLoading={isLoading} />
+              ) : (
+                <ProBadge feature="PR Review" />
+              )}
             </TabsContent>
             <TabsContent value="multi">
-              <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
+              {hasMultiRepo ? (
+                <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
+              ) : (
+                <ProBadge feature="Multi-Repo Analysis" />
+              )}
             </TabsContent>
           </Tabs>
         </div>
@@ -222,7 +254,7 @@ const Index = () => {
           } : undefined}
         />
 
-        {output && !isLoading && codeRef.current && (
+        {output && !isLoading && codeRef.current && hasFollowUp && (
           <FollowUpInput onSubmit={handleFollowUp} isLoading={isLoading} />
         )}
 
