@@ -575,9 +575,15 @@ Authenticated users are redirected to the main analysis page (`Index.tsx`) via t
 2. Choose an input method:
    - **Figma Link**: Paste a Figma file/design/prototype URL (e.g., `figma.com/design/...`)
    - **Paste / Upload**: Paste frontend code (HTML/CSS/React), Figma exported tokens, or design specs — or drag-and-drop / upload design files (`.fig`, `.sketch`, `.xd`, `.css`, `.html`, `.tsx`, `.json`, etc.)
+   - **Screenshots**: Upload UI screenshots for visual AI analysis. Supports:
+     - **Click to browse** for image files (PNG, JPG, WebP, up to 10MB each, max 5 images)
+     - **Drag & drop** images directly into the upload area
+     - **Clipboard paste** — press `Ctrl+V` (or `Cmd+V` on Mac) to paste screenshots from your clipboard (e.g. after using a snipping tool or taking a screenshot)
+     - Thumbnails preview with individual remove buttons
 3. Optionally type a specific design question
-4. Click **"Review UI/UX Design"**
-5. The AI analyzes for visual hierarchy, accessibility (WCAG), interaction patterns, responsive design, and provides actionable improvement suggestions
+4. Click **"Review UI/UX Design"** (or **"Review N Screenshots"** in screenshot mode)
+5. The AI analyzes for visual hierarchy, accessibility (WCAG), interaction patterns, responsive design, color usage, typography, and provides actionable improvement suggestions
+6. When screenshots are provided, the AI uses a vision-capable model (Gemini 2.5 Flash) to directly analyze the visual content
 
 ### Generating Documentation
 
