@@ -7,6 +7,7 @@ import { ExampleSnippets } from "@/components/ExampleSnippets";
 import { GitHubInput } from "@/components/GitHubInput";
 import { PRInput } from "@/components/PRInput";
 import { MultiRepoInput } from "@/components/MultiRepoInput";
+import { FigmaInput } from "@/components/FigmaInput";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { HistoryPanel } from "@/components/HistoryPanel";
 import { FollowUpInput } from "@/components/FollowUpInput";
@@ -17,7 +18,7 @@ import { streamAnalysis } from "@/lib/streaming";
 import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import { Braces, BarChart3, BookOpen, Puzzle, Lock } from "lucide-react";
+import { Braces, BarChart3, BookOpen, Puzzle, Lock, Palette } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UpgradeModal } from "@/components/UpgradeModal";
@@ -127,7 +128,8 @@ const Index = () => {
     if (!hasMultiRepo && newMode === "multi_repo") { setUpgradeFeature("Multi-Repo Analysis"); return; }
     if (newMode === "pr_diff") setActiveTab("pr");
     else if (newMode === "multi_repo") setActiveTab("multi");
-    else if (activeTab === "pr" || activeTab === "multi") setActiveTab("paste");
+    else if (newMode === "uiux_review") setActiveTab("figma");
+    else if (activeTab === "pr" || activeTab === "multi" || activeTab === "figma") setActiveTab("paste");
   };
 
   const handleTabChange = (tab: string) => {
@@ -136,7 +138,7 @@ const Index = () => {
     setActiveTab(tab);
   };
 
-  const showExamples = !["pr_diff", "multi_repo"].includes(mode);
+  const showExamples = !["pr_diff", "multi_repo", "uiux_review"].includes(mode);
 
   return (
     <div className="min-h-screen bg-background">
@@ -207,6 +209,10 @@ const Index = () => {
                 Multi-Repo
                 {!hasMultiRepo && <Lock className="h-3 w-3 text-muted-foreground" />}
               </TabsTrigger>
+              <TabsTrigger value="figma" className="text-xs flex items-center gap-1">
+                <Palette className="h-3 w-3" />
+                UI/UX Design
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="paste">
               <CodeInput onSubmit={handlePasteSubmit} isLoading={isLoading} />
@@ -224,6 +230,9 @@ const Index = () => {
             </TabsContent>
             <TabsContent value="multi">
               <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
+            </TabsContent>
+            <TabsContent value="figma">
+              <FigmaInput onSubmit={handlePasteSubmit} isLoading={isLoading} />
             </TabsContent>
           </Tabs>
         </div>
