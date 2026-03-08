@@ -478,6 +478,7 @@ const Landing = () => {
           <div className="flex items-center gap-4">
             <Link to="/guide" className="hover:text-foreground transition-colors">Guide</Link>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+            <a href="#how-to-use" className="hover:text-foreground transition-colors">How to Use</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
           </div>
           <span>© {new Date().getFullYear()} CodeLens AI · Built with Lovable</span>
