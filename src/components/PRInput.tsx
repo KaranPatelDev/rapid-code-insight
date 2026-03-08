@@ -26,7 +26,7 @@ export function PRInput({ onDiffFetched, isLoading }: PRInputProps) {
     setError("");
     const parsed = parsePRUrl(url);
     if (!parsed) {
-      setError("Invalid PR URL. Use format: https://github.com/owner/repo/pull/123");
+      setError("Couldn't parse that PR URL. Expected format: https://github.com/owner/repo/pull/123");
       return;
     }
 
