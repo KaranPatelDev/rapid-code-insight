@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +29,12 @@ export function UserMenu() {
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem className="text-xs text-muted-foreground" disabled>
           {user.email}
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/profile" className="flex items-center">
+            <Settings className="h-3.5 w-3.5 mr-2" />
+            Profile Settings
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={signOut} className="text-destructive focus:text-destructive">
           <LogOut className="h-3.5 w-3.5 mr-2" />
