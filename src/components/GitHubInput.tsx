@@ -11,6 +11,8 @@ interface GitHubInputProps {
 
 export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
   const [url, setUrl] = useState("");
+  const [token, setToken] = useState("");
+  const [showToken, setShowToken] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState("");
 
