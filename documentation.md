@@ -10,6 +10,7 @@
 
 - [Overview](#overview)
 - [Features](#features)
+- [Pricing & Plans](#pricing--plans)
 - [Project Setup](#project-setup)
   - [Prerequisites](#prerequisites)
   - [Clone & Install](#clone--install)
@@ -22,6 +23,7 @@
 - [Project Structure](#project-structure)
 - [Architecture](#architecture)
 - [Analysis Modes](#analysis-modes)
+- [Landing Page](#landing-page)
 - [User Guide](#user-guide)
   - [Getting Started](#getting-started)
   - [Analyzing Code by Pasting](#analyzing-code-by-pasting)
@@ -85,6 +87,35 @@ CodeLens AI is a web application that lets developers paste code, connect GitHub
 | **Improve** | Test Generation | Generate unit, integration, and component tests |
 | **Improve** | Documentation | Production-grade markdown docs with diagrams |
 | **Review** | PR Review | Diff analysis with verdict and regression detection |
+
+---
+
+## Pricing & Plans
+
+CodeLens AI uses a three-tier pricing model with server-side enforcement.
+
+| Feature | Free | Pro ($19/mo) | Team ($49/mo) |
+|---|:---:|:---:|:---:|
+| Daily analyses | 5 | 50 | Unlimited |
+| All 13 analysis modes | ✅ | ✅ | ✅ |
+| GitHub repo support | ✅ | ✅ | ✅ |
+| Share results | ✅ | ✅ | ✅ |
+| PR review | — | ✅ | ✅ |
+| Multi-repo analysis | — | ✅ | ✅ |
+| Analysis history | — | ✅ | ✅ |
+| Follow-up questions | — | ✅ | ✅ |
+| Priority processing | — | ✅ | ✅ |
+| Team workspaces | — | — | ✅ |
+| Shared history & insights | — | — | ✅ |
+| Priority support | — | — | ✅ |
+| Custom integrations | — | — | ✅ |
+
+### Implementation Details
+
+- **Database**: A `subscriptions` table stores each user's plan (`free`, `pro`, `team` enum). A trigger auto-creates a `free` subscription for new users.
+- **Client-side**: The `useUserPlan` hook (`src/hooks/useUserPlan.tsx`) queries the user's subscription and exposes feature flags (`hasPRReview`, `hasMultiRepo`, `hasHistory`, `hasFollowUp`, etc.) plus `dailyLimit`.
+- **Server-side**: The `analyze-code` edge function enforces daily limits per plan tier by querying the `daily_usage` and `subscriptions` tables.
+- **UI gating**: Pro/Team features show a lock badge with upgrade prompt for free users.
 
 ---
 
@@ -463,6 +494,24 @@ codelens-ai/
 | **AI** | Lovable AI Gateway | Gemini 3 Flash model |
 | **Language** | TypeScript | Full type safety |
 | **Testing** | Vitest | Unit and integration tests |
+
+---
+
+## Landing Page
+
+The landing page (`src/pages/Landing.tsx`) is shown to signed-out visitors at `/`. It uses `framer-motion` for scroll-triggered animations and includes:
+
+1. **Hero** — Headline, subheadline, CTAs ("Start Analyzing" + "Read the Guide"), and a radial gradient background.
+2. **Features** — 8-card grid showcasing key analysis capabilities with staggered fade-in animations.
+3. **Testimonials** — 3 testimonial cards with star ratings and avatars.
+4. **How to Use** — 3-step guide (Input → Choose Mode → Get Insights) with detail lists and a full feature-by-plan comparison table.
+5. **Pricing** — 3-tier pricing cards (Free / Pro / Team) with the Pro tier highlighted as "Most Popular."
+6. **CTA** — Final call-to-action with "Get Started Free" button.
+7. **Footer** — Logo, nav links (Guide, Features, How to Use, Pricing), copyright.
+
+The nav bar includes links to Features, How to Use, and Pricing sections (smooth scroll anchors).
+
+Authenticated users are redirected to the main analysis page (`Index.tsx`) via the `HomeRoute` component in `App.tsx`.
 
 ---
 
