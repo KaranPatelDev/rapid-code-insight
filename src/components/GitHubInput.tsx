@@ -74,6 +74,23 @@ export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
           {fetching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Fetch"}
         </Button>
       </div>
+      <button
+        type="button"
+        onClick={() => setShowToken(!showToken)}
+        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <KeyRound className="h-3 w-3" />
+        {showToken ? "Hide token" : "Private repo? Add token"}
+      </button>
+      {showToken && (
+        <Input
+          type="password"
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
+          placeholder="GitHub personal access token (optional)"
+          className="bg-card border-border/50 text-sm"
+        />
+      )}
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );

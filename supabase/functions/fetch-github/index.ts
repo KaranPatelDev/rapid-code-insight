@@ -89,7 +89,7 @@ serve(async (req) => {
       try {
         const fileResp = await fetch(
           `https://api.github.com/repos/${owner}/${repo}/contents/${file.path}`,
-          { headers: { Accept: "application/vnd.github.v3.raw", "User-Agent": "CodeLens-AI" } }
+          { headers: { Accept: "application/vnd.github.v3.raw", "User-Agent": "CodeLens-AI", ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
         );
         if (fileResp.ok) {
           const fileContent = await fileResp.text();
