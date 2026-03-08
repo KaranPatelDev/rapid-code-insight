@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { SEOHead } from "@/components/SEOHead";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserMenu } from "@/components/UserMenu";
 import {
@@ -130,6 +131,7 @@ function Kbd({ children }: { children: React.ReactNode }) {
 export default function Guide() {
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="Guide" description="Learn how to use CodeLens AI's 13 analysis modes, GitHub integration, and more." />
       <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">

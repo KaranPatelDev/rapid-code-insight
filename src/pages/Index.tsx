@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
+import { SEOHead } from "@/components/SEOHead";
 import { CodeInput } from "@/components/CodeInput";
 import { AnalysisOutput } from "@/components/AnalysisOutput";
 import { ExampleSnippets } from "@/components/ExampleSnippets";
@@ -126,6 +127,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="Analyze Code" description="Paste code, connect GitHub repos, or submit PRs for instant AI-powered analysis across 13 specialized modes." />
       <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
