@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Github, Loader2, KeyRound } from "lucide-react";
+import { Github, Loader2, KeyRound, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface GitHubInputProps {
@@ -18,9 +18,7 @@ export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
 
   const normalizeUrl = (input: string): string => {
     let cleaned = input.trim().replace(/\/$/, "").replace(/\.git$/, "");
-    // Fix missing protocol
     if (cleaned.startsWith("github.com")) cleaned = "https://" + cleaned;
-    // Strip tree/branch paths: github.com/owner/repo/tree/main/... → github.com/owner/repo
     cleaned = cleaned.replace(/(github\.com\/[^\/\s]+\/[^\/\s]+)\/(tree|blob|commits|issues|pulls|actions|wiki|releases|tags|compare|settings)(\/.*)?$/, "$1");
     return cleaned;
   };
@@ -34,9 +32,13 @@ export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
     return null;
   };
 
+  const parsed = useMemo(() => {
+    if (!url.trim()) return null;
+    return parseGitHubUrl(url);
+  }, [url]);
+
   const handleFetch = async () => {
     setError("");
-    const parsed = parseGitHubUrl(url);
     if (!parsed) {
       const hint = url.includes("github.com")
         ? `Try: https://github.com/facebook/react`
@@ -87,6 +89,17 @@ export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
           {fetching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Fetch"}
         </Button>
       </div>
+      {parsed && url.trim() && (
+        <div className="flex items-center gap-1.5 text-xs text-primary">
+          <CheckCircle2 className="h-3 w-3" />
+          <span className="font-mono">{parsed.owner}/{parsed.repo}</span>
+        </div>
+      )}
+      {url.trim() && !parsed && (
+        <p className="text-xs text-muted-foreground">
+          Format: <span className="font-mono">owner/repo</span> or <span className="font-mono">https://github.com/owner/repo</span>
+        </p>
+      )}
       <button
         type="button"
         onClick={() => setShowToken(!showToken)}

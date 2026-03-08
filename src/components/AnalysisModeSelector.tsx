@@ -1,6 +1,6 @@
 import {
   Shield, Zap, CheckCircle, Building2, GitPullRequest,
-  Route, Bug, GitCompare, FlaskConical, Network, Brain, Wrench, Layers,
+  Route, Bug, GitCompare, FlaskConical, Network, Brain, Wrench, Layers, FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -17,7 +17,8 @@ export type AnalysisMode =
   | "refactoring"
   | "knowledge_graph"
   | "multi_repo"
-  | "pr_diff";
+  | "pr_diff"
+  | "documentation";
 
 interface AnalysisModeSelectorProps {
   value: AnalysisMode;
@@ -36,6 +37,7 @@ const modes: { id: AnalysisMode; label: string; icon: typeof Shield; description
   { id: "best_practices", label: "Best Practices", icon: CheckCircle, description: "Code quality", category: "Improve" },
   { id: "refactoring", label: "Refactoring", icon: Wrench, description: "AI refactor suggestions", category: "Improve" },
   { id: "test_generation", label: "Test Gen", icon: FlaskConical, description: "Generate test cases", category: "Improve" },
+  { id: "documentation", label: "Documentation", icon: FileText, description: "Generate full docs", category: "Improve" },
   { id: "pr_diff", label: "PR Review", icon: GitPullRequest, description: "Diff & review", category: "Review" },
 ];
 
