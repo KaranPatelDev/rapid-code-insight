@@ -24,8 +24,13 @@ export default defineConfig(({ mode }) => ({
             id.includes("lucide-react/dist/esm/icons/loader-circle") ||
             id.includes("src/components/ui/input.tsx")
           ) {
-            return undefined; // bundle with importer, not separate chunk
+            return undefined;
           }
+          // Split heavy vendor libs into separate chunks loaded on demand
+          if (id.includes("node_modules/@supabase")) return "vendor-supabase";
+          if (id.includes("node_modules/@tanstack/react-query")) return "vendor-query";
+          if (id.includes("node_modules/sonner")) return "vendor-sonner";
+          if (id.includes("node_modules/@radix-ui")) return "vendor-radix";
         },
       },
     },
