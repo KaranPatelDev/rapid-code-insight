@@ -20,22 +20,7 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import { Braces, BarChart3, BookOpen, Puzzle, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-function ProBadge({ feature }: { feature: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-        <Lock className="h-5 w-5 text-primary" />
-      </div>
-      <div>
-        <p className="font-semibold text-sm">{feature} requires Pro</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Upgrade to Pro or Team to unlock this feature.
-        </p>
-      </div>
-    </div>
-  );
-}
+import { UpgradeModal } from "@/components/UpgradeModal";
 
 const Index = () => {
   const [output, setOutput] = useState("");
