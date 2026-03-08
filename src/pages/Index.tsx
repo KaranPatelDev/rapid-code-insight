@@ -195,7 +195,7 @@ const Index = () => {
         )}
 
         <div className="bg-card border border-border/50 rounded-xl p-6 glow-primary">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="mb-4 bg-muted/50">
               <TabsTrigger value="paste" className="text-xs">Paste Code</TabsTrigger>
               <TabsTrigger value="github" className="text-xs">GitHub Repo</TabsTrigger>
@@ -220,21 +220,19 @@ const Index = () => {
               </div>
             </TabsContent>
             <TabsContent value="pr">
-              {hasPRReview ? (
-                <PRInput onDiffFetched={handlePRFetch} isLoading={isLoading} />
-              ) : (
-                <ProBadge feature="PR Review" />
-              )}
+              <PRInput onDiffFetched={handlePRFetch} isLoading={isLoading} />
             </TabsContent>
             <TabsContent value="multi">
-              {hasMultiRepo ? (
-                <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
-              ) : (
-                <ProBadge feature="Multi-Repo Analysis" />
-              )}
+              <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
             </TabsContent>
           </Tabs>
         </div>
+
+        <UpgradeModal
+          open={!!upgradeFeature}
+          onOpenChange={(open) => !open && setUpgradeFeature(null)}
+          feature={upgradeFeature ?? ""}
+        />
 
         <AnalysisOutput
           content={output}
