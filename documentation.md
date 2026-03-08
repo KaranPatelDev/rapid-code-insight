@@ -1,6 +1,6 @@
 # CodeLens AI — Documentation
 
-> **AI-powered code analysis platform** with 13 specialized modes including architecture visualization, security scanning, AI debugging, documentation generation, PR review, and multi-repository understanding.
+> **AI-powered code analysis platform** with 14 specialized modes including architecture visualization, security scanning, AI debugging, documentation generation, UI/UX review, PR review, and multi-repository understanding.
 
 **Live URL**: [https://rapid-code-insight.lovable.app](https://rapid-code-insight.lovable.app)
 
