@@ -17,10 +17,13 @@ export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
   const [error, setError] = useState("");
 
   const parseGitHubUrl = (input: string): { owner: string; repo: string } | null => {
-    // Handle: https://github.com/owner/repo, github.com/owner/repo, owner/repo
     const cleaned = input.trim().replace(/\/$/, "").replace(/\.git$/, "");
-    const ghMatch = cleaned.match(/(?:github\.com\/)?([^\/\s]+)\/([^\/\s]+)/);
-    if (ghMatch) return { owner: ghMatch[1], repo: ghMatch[2] };
+    // First try full GitHub URL
+    const fullMatch = cleaned.match(/github\.com\/([^\/\s]+)\/([^\/\s]+)/);
+    if (fullMatch) return { owner: fullMatch[1], repo: fullMatch[2] };
+    // Then try owner/repo format (must not contain dots to avoid matching domains)
+    const shortMatch = cleaned.match(/^([^\/.\s]+)\/([^\/\s]+)$/);
+    if (shortMatch) return { owner: shortMatch[1], repo: shortMatch[2] };
     return null;
   };
 
