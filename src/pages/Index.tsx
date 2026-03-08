@@ -5,6 +5,7 @@ import { AnalysisOutput } from "@/components/AnalysisOutput";
 import { ExampleSnippets } from "@/components/ExampleSnippets";
 import { GitHubInput } from "@/components/GitHubInput";
 import { PRInput } from "@/components/PRInput";
+import { MultiRepoInput } from "@/components/MultiRepoInput";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { HistoryPanel } from "@/components/HistoryPanel";
 import { FollowUpInput } from "@/components/FollowUpInput";
@@ -87,6 +88,11 @@ const Index = () => {
     handleAnalyze(diff);
   };
 
+  const handleMultiRepoFetch = (code: string, _label: string) => {
+    sourceRef.current = "github";
+    handleAnalyze(code);
+  };
+
   const handlePasteSubmit = (code: string, question?: string) => {
     sourceRef.current = "paste";
     handleAnalyze(code, question);
@@ -109,15 +115,14 @@ const Index = () => {
     handleAnalyze(codeRef.current, question);
   };
 
-  // Auto-switch to PR tab when PR mode selected
   const handleModeChange = (newMode: AnalysisMode) => {
     setMode(newMode);
-    if (newMode === "pr_diff" && activeTab !== "pr") {
-      setActiveTab("pr");
-    } else if (newMode !== "pr_diff" && activeTab === "pr") {
-      setActiveTab("paste");
-    }
+    if (newMode === "pr_diff") setActiveTab("pr");
+    else if (newMode === "multi_repo") setActiveTab("multi");
+    else if (activeTab === "pr" || activeTab === "multi") setActiveTab("paste");
   };
+
+  const showExamples = !["pr_diff", "multi_repo"].includes(mode);
 
   return (
     <div className="min-h-screen bg-background">
@@ -141,16 +146,16 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-12">
-        <div className="text-center mb-10">
+      <main className="max-w-5xl mx-auto px-4 py-10">
+        <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             Understand any codebase
             <br />
             <span className="text-primary">in seconds</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Paste your code, fetch from GitHub, review PRs, or upload files. Get instant AI-powered
-            architecture analysis, security audits, performance reviews, and more.
+            12 AI-powered analysis modes: architecture, security, debugging, test generation,
+            refactoring, PR review, multi-repo understanding, and more.
           </p>
         </div>
 
@@ -160,8 +165,8 @@ const Index = () => {
           <AnalysisModeSelector value={mode} onChange={handleModeChange} />
         </div>
 
-        {mode !== "pr_diff" && (
-          <div className="mb-8">
+        {showExamples && (
+          <div className="mb-6">
             <p className="text-sm text-muted-foreground text-center mb-2">Try an example</p>
             <ExampleSnippets onSelect={handleExampleSelect} />
           </div>
@@ -173,6 +178,7 @@ const Index = () => {
               <TabsTrigger value="paste" className="text-xs">Paste Code</TabsTrigger>
               <TabsTrigger value="github" className="text-xs">GitHub Repo</TabsTrigger>
               <TabsTrigger value="pr" className="text-xs">PR Review</TabsTrigger>
+              <TabsTrigger value="multi" className="text-xs">Multi-Repo</TabsTrigger>
             </TabsList>
             <TabsContent value="paste">
               <CodeInput onSubmit={handlePasteSubmit} isLoading={isLoading} />
@@ -187,6 +193,9 @@ const Index = () => {
             </TabsContent>
             <TabsContent value="pr">
               <PRInput onDiffFetched={handlePRFetch} isLoading={isLoading} />
+            </TabsContent>
+            <TabsContent value="multi">
+              <MultiRepoInput onCodeFetched={handleMultiRepoFetch} isLoading={isLoading} />
             </TabsContent>
           </Tabs>
         </div>
@@ -207,43 +216,31 @@ const Index = () => {
         )}
 
         {!output && !isLoading && (
-          <div className="grid md:grid-cols-4 gap-4 mt-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-14">
             {[
-              {
-                title: "Architecture Analysis",
-                description: "Patterns, modules, and system design with visual diagrams.",
-                icon: "🏗️",
-              },
-              {
-                title: "Security Audit",
-                description: "Vulnerabilities, hardcoded secrets, and injection risks.",
-                icon: "🛡️",
-              },
-              {
-                title: "Performance Review",
-                description: "N+1 queries, memory leaks, and bottlenecks.",
-                icon: "⚡",
-              },
-              {
-                title: "PR Review",
-                description: "Diff analysis, impact assessment, and regression detection.",
-                icon: "🔀",
-              },
+              { title: "Architecture", description: "Patterns, modules, visual diagrams", icon: "🏗️" },
+              { title: "Request Flow", description: "Trace data through the system", icon: "🔀" },
+              { title: "Security Scan", description: "Vulnerabilities & injection risks", icon: "🛡️" },
+              { title: "AI Debugging", description: "Find bugs & edge cases", icon: "🐛" },
+              { title: "Test Generation", description: "Auto-generate test suites", icon: "🧪" },
+              { title: "Refactoring", description: "AI-powered improvement suggestions", icon: "🔧" },
+              { title: "Impact Analysis", description: "Change blast radius mapping", icon: "💥" },
+              { title: "Multi-Repo", description: "Cross-repository understanding", icon: "📦" },
             ].map((feature) => (
               <div
                 key={feature.title}
-                className="bg-card border border-border/50 rounded-xl p-5 hover:border-primary/30 transition-colors"
+                className="bg-card border border-border/50 rounded-xl p-4 hover:border-primary/30 transition-colors"
               >
-                <span className="text-2xl mb-3 block">{feature.icon}</span>
-                <h3 className="font-semibold mb-1 text-sm">{feature.title}</h3>
-                <p className="text-xs text-muted-foreground">{feature.description}</p>
+                <span className="text-xl mb-2 block">{feature.icon}</span>
+                <h3 className="font-semibold mb-0.5 text-sm">{feature.title}</h3>
+                <p className="text-[11px] text-muted-foreground">{feature.description}</p>
               </div>
             ))}
           </div>
         )}
       </main>
 
-      <footer className="border-t border-border/50 mt-20">
+      <footer className="border-t border-border/50 mt-16">
         <div className="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-muted-foreground">
           Powered by AI · Built with Lovable
         </div>
