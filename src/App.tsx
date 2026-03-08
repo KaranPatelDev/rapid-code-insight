@@ -60,7 +60,7 @@ const App = () => (
             <BrowserRouter>
               <Suspense fallback={<Loading />}>
                 <Routes>
-                  <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                  <Route path="/" element={<HomeRoute />} />
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                   <Route path="/guide" element={<ProtectedRoute><Guide /></ProtectedRoute>} />
                   <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
