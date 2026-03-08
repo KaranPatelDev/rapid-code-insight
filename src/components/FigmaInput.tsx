@@ -232,8 +232,6 @@ export function FigmaInput({ onSubmit, isLoading }: FigmaInputProps) {
             <p className="text-xs text-muted-foreground/60 mt-1">
               PNG, JPG, WebP · Max 10MB each · Up to 5 images
             </p>
-              PNG, JPG, WebP · Max 10MB each · Up to 5 images
-            </p>
             <input
               ref={imageInputRef}
               type="file"
