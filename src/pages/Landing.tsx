@@ -103,6 +103,7 @@ const Landing = () => {
           </div>
           <div className="flex items-center gap-2">
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 hidden sm:inline-block">Features</a>
+            <a href="#how-to-use" className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 hidden sm:inline-block">How to Use</a>
             <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 hidden sm:inline-block">Pricing</a>
             <ThemeToggle />
             <Link to="/auth">
