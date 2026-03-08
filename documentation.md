@@ -90,6 +90,35 @@ CodeLens AI is a web application that lets developers paste code, connect GitHub
 
 ---
 
+## Pricing & Plans
+
+CodeLens AI uses a three-tier pricing model with server-side enforcement.
+
+| Feature | Free | Pro ($19/mo) | Team ($49/mo) |
+|---|:---:|:---:|:---:|
+| Daily analyses | 5 | 50 | Unlimited |
+| All 13 analysis modes | ✅ | ✅ | ✅ |
+| GitHub repo support | ✅ | ✅ | ✅ |
+| Share results | ✅ | ✅ | ✅ |
+| PR review | — | ✅ | ✅ |
+| Multi-repo analysis | — | ✅ | ✅ |
+| Analysis history | — | ✅ | ✅ |
+| Follow-up questions | — | ✅ | ✅ |
+| Priority processing | — | ✅ | ✅ |
+| Team workspaces | — | — | ✅ |
+| Shared history & insights | — | — | ✅ |
+| Priority support | — | — | ✅ |
+| Custom integrations | — | — | ✅ |
+
+### Implementation Details
+
+- **Database**: A `subscriptions` table stores each user's plan (`free`, `pro`, `team` enum). A trigger auto-creates a `free` subscription for new users.
+- **Client-side**: The `useUserPlan` hook (`src/hooks/useUserPlan.tsx`) queries the user's subscription and exposes feature flags (`hasPRReview`, `hasMultiRepo`, `hasHistory`, `hasFollowUp`, etc.) plus `dailyLimit`.
+- **Server-side**: The `analyze-code` edge function enforces daily limits per plan tier by querying the `daily_usage` and `subscriptions` tables.
+- **UI gating**: Pro/Team features show a lock badge with upgrade prompt for free users.
+
+---
+
 ## Project Setup
 
 ### Prerequisites
