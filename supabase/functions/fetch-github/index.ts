@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { owner, repo } = await req.json();
+    const { owner, repo, token } = await req.json();
     if (!owner || !repo) {
       return new Response(
         JSON.stringify({ error: "owner and repo are required" }),
