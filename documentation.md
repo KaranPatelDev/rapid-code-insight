@@ -99,7 +99,7 @@ CodeLens AI uses a three-tier pricing model with server-side enforcement.
 | Feature | Free | Pro ($19/mo) | Team ($49/mo) |
 |---|:---:|:---:|:---:|
 | Daily analyses | 5 | 50 | Unlimited |
-| All 13 analysis modes | ✅ | ✅ | ✅ |
+| All 14 analysis modes | ✅ | ✅ | ✅ |
 | GitHub repo support | ✅ | ✅ | ✅ |
 | Share results | ✅ | ✅ | ✅ |
 | PR review | — | ✅ | ✅ |
