@@ -49,6 +49,7 @@ mermaid.initialize({
 interface AnalysisOutputProps {
   content: string;
   isStreaming: boolean;
+  mode?: string;
   shareData?: {
     title: string;
     code: string;
@@ -57,7 +58,7 @@ interface AnalysisOutputProps {
   };
 }
 
-export function AnalysisOutput({ content, isStreaming, shareData }: AnalysisOutputProps) {
+export function AnalysisOutput({ content, isStreaming, mode, shareData }: AnalysisOutputProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -83,6 +84,8 @@ export function AnalysisOutput({ content, isStreaming, shareData }: AnalysisOutp
     URL.revokeObjectURL(url);
   };
 
+  const isDocMode = mode === "documentation";
+
   if (!content && !isStreaming) return null;
 
   return (
@@ -95,7 +98,13 @@ export function AnalysisOutput({ content, isStreaming, shareData }: AnalysisOutp
           </span>
         </div>
         <div className="flex items-center gap-1">
-          {content && !isStreaming && (
+          {content && !isStreaming && isDocMode && (
+            <Button variant="default" size="sm" onClick={handleExportMarkdown} className="gap-1.5">
+              <Download className="h-3.5 w-3.5" />
+              <span className="text-xs">Download .md</span>
+            </Button>
+          )}
+          {content && !isStreaming && !isDocMode && (
             <Button variant="ghost" size="sm" onClick={handleExportMarkdown} className="text-muted-foreground hover:text-foreground">
               <Download className="h-3.5 w-3.5" />
               <span className="ml-1 text-xs">Export</span>

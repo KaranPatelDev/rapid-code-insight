@@ -203,6 +203,7 @@ const Index = () => {
         <AnalysisOutput
           content={output}
           isStreaming={isLoading}
+          mode={mode}
           shareData={output && !isLoading ? {
             title: generateTitle(codeRef.current, questionRef.current),
             code: codeRef.current,
