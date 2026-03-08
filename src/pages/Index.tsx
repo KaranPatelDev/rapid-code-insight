@@ -101,9 +101,9 @@ const Index = () => {
     handleAnalyze(code);
   };
 
-  const handlePasteSubmit = (code: string, question?: string) => {
+  const handlePasteSubmit = (code: string, question?: string, images?: string[]) => {
     sourceRef.current = "paste";
-    handleAnalyze(code, question);
+    handleAnalyze(code, question, images);
   };
 
   const handleHistorySelect = (entry: HistoryEntry) => {
