@@ -21,7 +21,7 @@ serve(async (req) => {
     // Fetch repo tree using GitHub API (public repos, no auth needed)
     const treeResp = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`,
-      { headers: { Accept: "application/vnd.github.v3+json", "User-Agent":, ...(token ? { Authorization: `Bearer ${token}` } : {}) "CodeL, ...(token ? { Authorization: `Bearer ${token}` } : {})ens-AI" } }
+      { headers: { Accept: "application/vnd.github.v3+json", "User-Agent": "CodeLens-AI", ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
     );
 
     if (!treeResp.ok) {
