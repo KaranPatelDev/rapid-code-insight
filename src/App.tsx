@@ -10,6 +10,7 @@ const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ defaul
 const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
 
 const Index = lazy(() => import("./pages/Index"));
+const Landing = lazy(() => import("./pages/Landing"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Guide = lazy(() => import("./pages/Guide"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -35,6 +36,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function HomeRoute() {
+  const { user, loading } = useAuth();
+  if (loading) return <Loading />;
+  return user ? <Index /> : <Landing />;
+}
+
 function AuthRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -53,7 +60,7 @@ const App = () => (
             <BrowserRouter>
               <Suspense fallback={<Loading />}>
                 <Routes>
-                  <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                  <Route path="/" element={<HomeRoute />} />
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                   <Route path="/guide" element={<ProtectedRoute><Guide /></ProtectedRoute>} />
                   <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
