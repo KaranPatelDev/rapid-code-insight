@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from "react";
+import { Link } from "react-router-dom";
 import { CodeInput } from "@/components/CodeInput";
 import { AnalysisOutput } from "@/components/AnalysisOutput";
 import { ExampleSnippets } from "@/components/ExampleSnippets";
