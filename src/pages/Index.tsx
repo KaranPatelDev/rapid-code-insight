@@ -131,6 +131,9 @@ const Index = () => {
             <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">AI</span>
           </div>
           <div className="flex items-center gap-1">
+            <Link to="/dashboard" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 mr-1 px-2 py-1 rounded-md hover:bg-muted/50 transition-colors">
+              <BarChart3 className="h-3.5 w-3.5" /> Stats
+            </Link>
             <HistoryPanel onSelect={handleHistorySelect} />
             <ThemeToggle />
             <UserMenu />
