@@ -1,26 +1,53 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { CodeInput } from "@/components/CodeInput";
 import { AnalysisOutput } from "@/components/AnalysisOutput";
 import { ExampleSnippets } from "@/components/ExampleSnippets";
+import { GitHubInput } from "@/components/GitHubInput";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { HistoryPanel } from "@/components/HistoryPanel";
 import { streamAnalysis } from "@/lib/streaming";
+import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
 import { Braces, Terminal, GitBranch } from "lucide-react";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedExample, setSelectedExample] = useState("");
+  const [activeTab, setActiveTab] = useState("paste");
+  const codeRef = useRef("");
+  const questionRef = useRef<string | undefined>();
+  const sourceRef = useRef<"paste" | "github" | "file" | "example">("paste");
 
   const handleAnalyze = useCallback(async (code: string, question?: string) => {
     setOutput("");
     setIsLoading(true);
+    codeRef.current = code;
+    questionRef.current = question;
+
+    let fullOutput = "";
 
     try {
       await streamAnalysis({
         code,
         question,
-        onDelta: (text) => setOutput((prev) => prev + text),
-        onDone: () => setIsLoading(false),
+        onDelta: (text) => {
+          fullOutput += text;
+          setOutput((prev) => prev + text);
+        },
+        onDone: () => {
+          setIsLoading(false);
+          // Save to history
+          if (fullOutput.length > 20) {
+            addToHistory({
+              title: generateTitle(codeRef.current, questionRef.current),
+              code: codeRef.current,
+              question: questionRef.current,
+              output: fullOutput,
+              source: sourceRef.current,
+            });
+          }
+        },
         onError: (error) => {
           toast.error(error);
           setIsLoading(false);
@@ -33,8 +60,23 @@ const Index = () => {
   }, []);
 
   const handleExampleSelect = (code: string) => {
-    setSelectedExample(code);
+    sourceRef.current = "example";
+    setActiveTab("paste");
     handleAnalyze(code);
+  };
+
+  const handleGitHubFetch = (code: string, repoName: string) => {
+    sourceRef.current = "github";
+    handleAnalyze(code);
+  };
+
+  const handlePasteSubmit = (code: string, question?: string) => {
+    sourceRef.current = "paste";
+    handleAnalyze(code, question);
+  };
+
+  const handleHistorySelect = (entry: HistoryEntry) => {
+    setOutput(entry.output);
   };
 
   return (
@@ -49,13 +91,9 @@ const Index = () => {
             <span className="font-semibold text-lg tracking-tight">CodeLens</span>
             <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">AI</span>
           </div>
-          <div className="flex items-center gap-4 text-muted-foreground">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
-              <GitBranch className="h-4 w-4" />
-            </a>
-            <a href="#" className="hover:text-foreground transition-colors">
-              <Terminal className="h-4 w-4" />
-            </a>
+          <div className="flex items-center gap-1">
+            <HistoryPanel onSelect={handleHistorySelect} />
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -69,7 +107,7 @@ const Index = () => {
             <span className="text-primary">in seconds</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Paste your code, repository structure, or entire files. Get instant AI-powered
+            Paste your code, fetch from GitHub, or upload files. Get instant AI-powered
             architecture analysis, flow explanations, and technical walkthroughs.
           </p>
         </div>
@@ -80,12 +118,25 @@ const Index = () => {
           <ExampleSnippets onSelect={handleExampleSelect} />
         </div>
 
-        {/* Input */}
+        {/* Input with tabs */}
         <div className="bg-card border border-border/50 rounded-xl p-6 glow-primary">
-          <CodeInput
-            onSubmit={handleAnalyze}
-            isLoading={isLoading}
-          />
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="mb-4 bg-muted/50">
+              <TabsTrigger value="paste" className="text-xs">Paste Code</TabsTrigger>
+              <TabsTrigger value="github" className="text-xs">GitHub Repo</TabsTrigger>
+            </TabsList>
+            <TabsContent value="paste">
+              <CodeInput onSubmit={handlePasteSubmit} isLoading={isLoading} />
+            </TabsContent>
+            <TabsContent value="github">
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Enter a public GitHub repository URL to fetch and analyze its code.
+                </p>
+                <GitHubInput onCodeFetched={handleGitHubFetch} isLoading={isLoading} />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Output */}
