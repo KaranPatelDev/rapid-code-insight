@@ -14,7 +14,7 @@ import { AnalysisModeSelector, AnalysisMode } from "@/components/AnalysisModeSel
 import { streamAnalysis } from "@/lib/streaming";
 import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
 import { useAuth } from "@/hooks/useAuth";
-import { Braces, BarChart3 } from "lucide-react";
+import { Braces, BarChart3, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
