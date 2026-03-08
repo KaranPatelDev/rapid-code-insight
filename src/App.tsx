@@ -48,8 +48,8 @@ const App = () => (
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <AuthProvider>
-            <Toaster />
-            <Sonner />
+            <Suspense fallback={null}><Toaster /></Suspense>
+            <Suspense fallback={null}><Sonner /></Suspense>
             <BrowserRouter>
               <Suspense fallback={<Loading />}>
                 <Routes>
