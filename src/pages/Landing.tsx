@@ -117,20 +117,25 @@ const Landing = () => {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" />
-        <div className="max-w-4xl mx-auto px-4 pt-24 pb-20 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-medium px-3 py-1.5 rounded-full mb-6 border border-primary/20">
+        <motion.div
+          className="max-w-4xl mx-auto px-4 pt-24 pb-20 text-center relative z-10"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
+          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-medium px-3 py-1.5 rounded-full mb-6 border border-primary/20">
             <Zap className="h-3 w-3" /> 13 specialized analysis modes
-          </div>
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
+          </motion.div>
+          <motion.h1 variants={fadeUp} className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
             Understand any codebase
             <br />
             <span className="text-primary">in seconds</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+          </motion.h1>
+          <motion.p variants={fadeUp} className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Paste code, connect GitHub repos, or submit PRs — get instant AI-powered insights on
             architecture, security, performance, and more.
-          </p>
-          <div className="flex items-center justify-center gap-4">
+          </motion.p>
+          <motion.div variants={fadeUp} className="flex items-center justify-center gap-4">
             <Link to="/auth">
               <Button size="lg" className="text-sm gap-2 px-8 h-12 shadow-lg shadow-primary/25">
                 Start Analyzing <ArrowRight className="h-4 w-4" />
@@ -141,9 +146,9 @@ const Landing = () => {
                 <BookOpen className="h-4 w-4" /> Read the Guide
               </Button>
             </Link>
-          </div>
-          <p className="text-xs text-muted-foreground mt-4">Free tier available · No credit card required</p>
-        </div>
+          </motion.div>
+          <motion.p variants={fadeUp} className="text-xs text-muted-foreground mt-4">Free tier available · No credit card required</motion.p>
+        </motion.div>
       </section>
 
       {/* Features */}
