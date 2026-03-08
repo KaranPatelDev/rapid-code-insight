@@ -310,6 +310,138 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* How to Use */}
+      <section id="how-to-use" className="py-24 bg-muted/30 border-t border-border/30">
+        <div className="max-w-5xl mx-auto px-4">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeUp}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              How it works
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Get AI-powered code insights in three simple steps.
+            </p>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
+            {[
+              {
+                step: "01",
+                icon: ClipboardPaste,
+                title: "Input your code",
+                desc: "Paste code directly, connect a GitHub repo, submit a PR URL, or analyze multiple repos together.",
+                details: ["Paste code snippets", "GitHub repo URL", "Pull Request URL", "Multi-repo (2–5 repos)"],
+              },
+              {
+                step: "02",
+                icon: MousePointerClick,
+                title: "Choose an analysis mode",
+                desc: "Pick from 13 specialized modes — architecture, security, debugging, test generation, and more.",
+                details: ["Architecture & flow diagrams", "Security & performance scans", "AI debugging & impact analysis", "Test generation & docs"],
+              },
+              {
+                step: "03",
+                icon: Eye,
+                title: "Get instant insights",
+                desc: "Watch the AI stream its analysis in real-time with Mermaid diagrams, code blocks, and actionable recommendations.",
+                details: ["Real-time streaming output", "Interactive Mermaid diagrams", "Copy, export, or share results", "Ask follow-up questions"],
+              },
+            ].map((item) => (
+              <motion.div
+                key={item.step}
+                variants={fadeIn}
+                className="bg-card border border-border/50 rounded-xl p-6 relative"
+              >
+                <span className="absolute top-4 right-4 text-4xl font-black text-primary/10">{item.step}</span>
+                <div className="h-11 w-11 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <item.icon className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.desc}</p>
+                <ul className="space-y-2">
+                  {item.details.map((d) => (
+                    <li key={d} className="flex items-center gap-2 text-sm">
+                      <Check className="h-3.5 w-3.5 text-primary shrink-0" />
+                      <span className="text-muted-foreground">{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Plan comparison mini-table */}
+          <motion.div
+            className="mt-16 bg-card border border-border/50 rounded-xl overflow-hidden"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeUp}
+          >
+            <div className="p-6 border-b border-border/30">
+              <h3 className="text-lg font-semibold">Feature availability by plan</h3>
+              <p className="text-sm text-muted-foreground mt-1">All plans include all 13 analysis modes and GitHub repo support.</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border/30 text-muted-foreground">
+                    <th className="text-left p-4 font-medium">Feature</th>
+                    <th className="text-center p-4 font-medium">Free</th>
+                    <th className="text-center p-4 font-medium text-primary">Pro</th>
+                    <th className="text-center p-4 font-medium">Team</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { feature: "Daily analyses", free: "5", pro: "50", team: "Unlimited" },
+                    { feature: "All 13 analysis modes", free: true, pro: true, team: true },
+                    { feature: "GitHub repo support", free: true, pro: true, team: true },
+                    { feature: "Share results", free: true, pro: true, team: true },
+                    { feature: "PR review", free: false, pro: true, team: true },
+                    { feature: "Multi-repo analysis", free: false, pro: true, team: true },
+                    { feature: "Analysis history", free: false, pro: true, team: true },
+                    { feature: "Follow-up questions", free: false, pro: true, team: true },
+                    { feature: "Priority processing", free: false, pro: true, team: true },
+                    { feature: "Team workspaces", free: false, pro: false, team: true },
+                    { feature: "Shared history", free: false, pro: false, team: true },
+                    { feature: "Priority support", free: false, pro: false, team: true },
+                    { feature: "Custom integrations", free: false, pro: false, team: true },
+                  ].map((row) => (
+                    <tr key={row.feature} className="border-b border-border/20 last:border-0">
+                      <td className="p-4 font-medium">{row.feature}</td>
+                      {[row.free, row.pro, row.team].map((val, i) => (
+                        <td key={i} className="text-center p-4">
+                          {typeof val === "boolean" ? (
+                            val ? (
+                              <Check className="h-4 w-4 text-primary mx-auto" />
+                            ) : (
+                              <span className="text-muted-foreground/40">—</span>
+                            )
+                          ) : (
+                            <span className={i === 1 ? "text-primary font-medium" : ""}>{val}</span>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-24 border-t border-border/30">
         <motion.div
