@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { HistoryPanel } from "@/components/HistoryPanel";
 import { FollowUpInput } from "@/components/FollowUpInput";
 import { UserMenu } from "@/components/UserMenu";
+import { UsageIndicator } from "@/components/UsageIndicator";
 import { AnalysisModeSelector, AnalysisMode } from "@/components/AnalysisModeSelector";
 import { streamAnalysis } from "@/lib/streaming";
 import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
