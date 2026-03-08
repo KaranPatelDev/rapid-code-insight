@@ -419,7 +419,7 @@ codelens-ai/
 │   ├── config.toml                  # Supabase project configuration
 │   └── functions/                   # Supabase Edge Functions (Deno)
 │       ├── analyze-code/
-│       │   └── index.ts             # AI analysis engine (13 mode prompts)
+│       │   └── index.ts             # AI analysis engine (14 mode prompts)
 │       └── fetch-github/
 │           └── index.ts             # GitHub API fetcher (repo + PR)
 │
