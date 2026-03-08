@@ -825,4 +825,159 @@ Test files use the `.test.ts` / `.test.tsx` extension and are located alongside 
 
 ---
 
+## Building Extensions
+
+### Chrome Extension (Manifest V3)
+
+Use the following prompt with any AI coding assistant to generate a complete Chrome extension that connects to the CodeLens AI backend:
+
+> **Build me a Chrome Manifest V3 browser extension called "CodeLens AI" that analyzes code on any webpage using my existing backend API.**
+>
+> **Backend API Details**
+> - **Endpoint:** `https://ewtfekdegqowqpmmaudj.supabase.co/functions/v1/analyze-code`
+> - **Method:** POST
+> - **Headers:**
+>   - `Content-Type: application/json`
+>   - `Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3dGZla2RlZ3Fvd3FwbW1hdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NDE1MDEsImV4cCI6MjA4ODUxNzUwMX0.M0EUR7R1TeC1MiXrNIyd4zYMofXckqw-V6HMhI6Xnok`
+> - **Body:** `{ "code": "<string>", "mode": "<string>", "question": "<string|optional>" }`
+> - **Response:** Server-Sent Events (SSE) stream. Each line is `data: {...}` with OpenAI-compatible chat completion chunks. `data: [DONE]` signals end. Extract `choices[0].delta.content` from each chunk.
+>
+> **Available Analysis Modes**
+> `architecture`, `request_flow`, `security`, `performance`, `best_practices`, `debugging`, `impact_analysis`, `test_generation`, `refactoring`, `knowledge_graph`, `documentation`, `pr_diff`, `multi_repo`
+>
+> **Extension Features**
+>
+> 1. **Popup UI** — A clean popup (400×500px) with:
+>    - A dropdown to select analysis mode
+>    - A "Grab Code from Page" button that extracts all `<code>` and `<pre>` blocks from the active tab
+>    - A textarea to paste/edit code manually
+>    - An "Analyze" button that streams results from the API
+>    - A scrollable output area that renders markdown (use a lightweight MD renderer like `marked`)
+>    - A follow-up question input to ask questions about the analysis
+>
+> 2. **Context Menu** — Right-click selected text → "Analyze with CodeLens AI" sends the selection to the popup for analysis.
+>
+> 3. **Content Script** — Injects a floating button on pages containing `<code>` or `<pre>` elements. Clicking it opens the popup pre-filled with that code.
+>
+> **Tech Stack**
+> - Manifest V3 (Chrome extension)
+> - Vanilla JS or lightweight framework (no React needed)
+> - `marked` library for markdown rendering
+> - SSE parsing for streaming responses
+>
+> **File Structure**
+> ```
+> codelens-extension/
+> ├── manifest.json
+> ├── popup/
+> │   ├── popup.html
+> │   ├── popup.css
+> │   └── popup.js
+> ├── background.js
+> ├── content.js
+> ├── lib/
+> │   └── marked.min.js
+> └── icons/
+>     ├── icon16.png
+>     ├── icon48.png
+>     └── icon128.png
+> ```
+>
+> **Key Requirements**
+> - Handle SSE streaming properly (parse `data:` lines, accumulate content, render incrementally)
+> - Show a loading spinner during analysis
+> - Store the last selected mode in `chrome.storage.local`
+> - Graceful error handling for 429 (rate limit) and 402 (usage limit) responses
+> - Dark theme UI that matches a developer tool aesthetic
+>
+> Give me ALL the code for every file, ready to load as an unpacked extension in `chrome://extensions`.
+
+---
+
+### VS Code Extension
+
+Use the following prompt with any AI coding assistant to generate a complete VS Code extension that connects to the CodeLens AI backend:
+
+> **Build me a VS Code extension called "CodeLens AI" that analyzes code using my existing backend API.**
+>
+> **Backend API Details**
+> - **Endpoint:** `https://ewtfekdegqowqpmmaudj.supabase.co/functions/v1/analyze-code`
+> - **Method:** POST
+> - **Headers:**
+>   - `Content-Type: application/json`
+>   - `Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3dGZla2RlZ3Fvd3FwbW1hdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NDE1MDEsImV4cCI6MjA4ODUxNzUwMX0.M0EUR7R1TeC1MiXrNIyd4zYMofXckqw-V6HMhI6Xnok`
+> - **Body:** `{ "code": "<string>", "mode": "<string>", "question": "<string|optional>" }`
+> - **Response:** Server-Sent Events (SSE) stream. Each line is `data: {...}` with OpenAI-compatible chat completion chunks. `data: [DONE]` signals end. Extract `choices[0].delta.content` from each chunk.
+>
+> **Available Analysis Modes**
+> `architecture`, `request_flow`, `security`, `performance`, `best_practices`, `debugging`, `impact_analysis`, `test_generation`, `refactoring`, `knowledge_graph`, `documentation`, `pr_diff`, `multi_repo`
+>
+> **Extension Features**
+>
+> 1. **Sidebar Webview Panel** — A dedicated sidebar view with:
+>    - Dropdown to select analysis mode
+>    - "Analyze Current File" button — sends the entire active editor content
+>    - "Analyze Selection" button — sends only highlighted/selected code
+>    - A scrollable output area that renders markdown with syntax highlighting
+>    - A follow-up question input to ask questions about the last analysis
+>    - Loading spinner during streaming
+>
+> 2. **Commands** (accessible via Command Palette `Ctrl+Shift+P`):
+>    - `CodeLens AI: Analyze Current File`
+>    - `CodeLens AI: Analyze Selection`
+>    - `CodeLens AI: Change Analysis Mode`
+>    - `CodeLens AI: Ask Follow-Up Question`
+>
+> 3. **Context Menu** — Right-click in the editor → "Analyze with CodeLens AI" submenu with mode options
+>
+> 4. **Status Bar** — Show current analysis mode in the status bar; clicking it opens the mode picker
+>
+> 5. **CodeLens Inline** — Add clickable "🔍 Analyze this function" links above each function/class declaration
+>
+> **Tech Stack**
+> - VS Code Extension API (TypeScript)
+> - Webview API for the sidebar panel (HTML/CSS/JS)
+> - `marked` for markdown rendering inside the webview
+> - `highlight.js` for syntax highlighting in the webview
+> - Native `fetch` for SSE streaming
+>
+> **File Structure**
+> ```
+> codelens-ai-vscode/
+> ├── package.json          # Extension manifest with contributes, commands, menus
+> ├── tsconfig.json
+> ├── src/
+> │   ├── extension.ts      # Activate/deactivate, register commands
+> │   ├── sidebarProvider.ts # WebviewViewProvider for sidebar
+> │   ├── api.ts             # SSE streaming client for the backend
+> │   ├── codelensProvider.ts# Inline CodeLens above functions
+> │   └── utils.ts           # Helpers (get selection, get file content)
+> ├── media/
+> │   ├── sidebar.html       # Webview HTML template
+> │   ├── sidebar.css        # Dark theme styles matching VS Code
+> │   └── sidebar.js         # Webview script (handles UI, messaging)
+> └── icons/
+>     └── icon.png
+> ```
+>
+> **Key Requirements**
+> - Handle SSE streaming properly (parse `data:` lines, accumulate content, render incrementally in the webview via `postMessage`)
+> - Store last selected mode in `vscode.workspace.getConfiguration()`
+> - Extension settings: allow users to override the API endpoint and auth token in VS Code settings
+> - Graceful error handling for 429 (rate limit) and 402 (usage limit) with VS Code notification messages
+> - Webview CSS should use VS Code's CSS variables (`--vscode-editor-background`, `--vscode-editor-foreground`, etc.) for native theme integration
+> - Support both light and dark themes automatically
+> - Add a keyboard shortcut: `Ctrl+Shift+L` (or `Cmd+Shift+L` on Mac) for "Analyze Selection"
+>
+> **package.json contributes section should include:**
+> - `viewsContainers` and `views` for the sidebar
+> - `commands` for all 4 commands
+> - `menus` for editor context menu and editor title
+> - `configuration` for extension settings (endpoint, token, default mode)
+> - `keybindings` for the keyboard shortcut
+>
+> Give me ALL the code for every file, ready to run with `npm run compile` and test with F5 in VS Code.
+
+---
+
 *Built with [Lovable](https://lovable.dev) · Powered by AI*
