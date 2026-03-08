@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GitPullRequest, Loader2, KeyRound } from "lucide-react";
+import { GitPullRequest, Loader2, KeyRound, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface PRInputProps {
@@ -24,9 +24,13 @@ export function PRInput({ onDiffFetched, isLoading }: PRInputProps) {
     return null;
   };
 
+  const parsed = useMemo(() => {
+    if (!url.trim()) return null;
+    return parsePRUrl(url);
+  }, [url]);
+
   const handleFetch = async () => {
     setError("");
-    const parsed = parsePRUrl(url);
     if (!parsed) {
       setError("Couldn't parse that PR URL. Expected format: https://github.com/owner/repo/pull/123");
       return;
@@ -82,6 +86,17 @@ export function PRInput({ onDiffFetched, isLoading }: PRInputProps) {
           {fetching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Analyze PR"}
         </Button>
       </div>
+      {parsed && url.trim() && (
+        <div className="flex items-center gap-1.5 text-xs text-primary">
+          <CheckCircle2 className="h-3 w-3" />
+          <span className="font-mono">{parsed.owner}/{parsed.repo} PR #{parsed.pr}</span>
+        </div>
+      )}
+      {url.trim() && !parsed && (
+        <p className="text-xs text-muted-foreground">
+          Format: <span className="font-mono">https://github.com/owner/repo/pull/123</span>
+        </p>
+      )}
       <button
         type="button"
         onClick={() => setShowToken(!showToken)}
