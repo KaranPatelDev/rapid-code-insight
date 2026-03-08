@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Copy, Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/ShareButton";
+import mermaid from "mermaid";
 import hljs from "highlight.js/lib/core";
 import javascript from "highlight.js/lib/languages/javascript";
 import typescript from "highlight.js/lib/languages/typescript";
@@ -37,6 +38,13 @@ hljs.registerLanguage("bash", bash);
 hljs.registerLanguage("sh", bash);
 hljs.registerLanguage("yaml", yaml);
 hljs.registerLanguage("yml", yaml);
+
+mermaid.initialize({
+  startOnLoad: false,
+  theme: "dark",
+  securityLevel: "loose",
+  fontFamily: "Space Grotesk, sans-serif",
+});
 
 interface AnalysisOutputProps {
   content: string;
@@ -115,10 +123,51 @@ export function AnalysisOutput({ content, isStreaming, shareData }: AnalysisOutp
         ref={containerRef}
         className="bg-card border border-border/50 rounded-lg p-6 max-h-[600px] overflow-y-auto prose prose-sm dark:prose-invert max-w-none"
       >
-        <MarkdownRenderer content={content} />
+        <MarkdownRenderer content={content} isStreaming={isStreaming} />
         {isStreaming && <span className="inline-block w-2 h-5 bg-accent ml-0.5 cursor-blink" />}
       </div>
     </div>
+  );
+}
+
+function MermaidDiagram({ code }: { code: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [svg, setSvg] = useState<string>("");
+  const [error, setError] = useState(false);
+  const idRef = useRef(`mermaid-${Math.random().toString(36).slice(2, 10)}`);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function render() {
+      try {
+        const { svg: rendered } = await mermaid.render(idRef.current, code);
+        if (!cancelled) {
+          setSvg(rendered);
+          setError(false);
+        }
+      } catch {
+        if (!cancelled) setError(true);
+      }
+    }
+    render();
+    return () => { cancelled = true; };
+  }, [code]);
+
+  if (error) {
+    return (
+      <pre className="bg-[hsl(var(--code-bg))] text-[hsl(var(--code-foreground))] p-4 rounded-lg overflow-x-auto text-sm border border-border/30">
+        <span className="absolute top-2 right-2 text-[10px] font-mono text-muted-foreground opacity-60">mermaid</span>
+        <code>{code}</code>
+      </pre>
+    );
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      className="my-4 p-4 bg-card border border-border/30 rounded-lg overflow-x-auto flex justify-center"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
   );
 }
 
@@ -152,7 +201,7 @@ function HighlightedCode({ code, lang }: { code: string; lang: string }) {
   );
 }
 
-function MarkdownRenderer({ content }: { content: string }) {
+function MarkdownRenderer({ content, isStreaming }: { content: string; isStreaming: boolean }) {
   const lines = content.split("\n");
   const elements: JSX.Element[] = [];
   let inCodeBlock = false;
@@ -163,7 +212,11 @@ function MarkdownRenderer({ content }: { content: string }) {
   for (const line of lines) {
     if (line.startsWith("```")) {
       if (inCodeBlock) {
-        elements.push(<HighlightedCode key={key++} code={codeContent} lang={codeLang} />);
+        if (codeLang === "mermaid") {
+          elements.push(<MermaidDiagram key={key++} code={codeContent} />);
+        } else {
+          elements.push(<HighlightedCode key={key++} code={codeContent} lang={codeLang} />);
+        }
         codeContent = "";
         inCodeBlock = false;
       } else {
@@ -204,8 +257,13 @@ function MarkdownRenderer({ content }: { content: string }) {
     }
   }
 
+  // If still in a code block (streaming), render what we have so far
   if (inCodeBlock && codeContent) {
-    elements.push(<HighlightedCode key={key++} code={codeContent} lang={codeLang} />);
+    if (codeLang === "mermaid" && !isStreaming) {
+      elements.push(<MermaidDiagram key={key++} code={codeContent} />);
+    } else {
+      elements.push(<HighlightedCode key={key++} code={codeContent} lang={codeLang} />);
+    }
   }
 
   return <>{elements}</>;

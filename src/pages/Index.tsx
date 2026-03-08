@@ -3,6 +3,7 @@ import { CodeInput } from "@/components/CodeInput";
 import { AnalysisOutput } from "@/components/AnalysisOutput";
 import { ExampleSnippets } from "@/components/ExampleSnippets";
 import { GitHubInput } from "@/components/GitHubInput";
+import { PRInput } from "@/components/PRInput";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { HistoryPanel } from "@/components/HistoryPanel";
 import { FollowUpInput } from "@/components/FollowUpInput";
@@ -80,6 +81,11 @@ const Index = () => {
     handleAnalyze(code);
   };
 
+  const handlePRFetch = (diff: string, _prTitle: string) => {
+    sourceRef.current = "github";
+    handleAnalyze(diff);
+  };
+
   const handlePasteSubmit = (code: string, question?: string) => {
     sourceRef.current = "paste";
     handleAnalyze(code, question);
@@ -100,6 +106,16 @@ const Index = () => {
     }
     questionRef.current = question;
     handleAnalyze(codeRef.current, question);
+  };
+
+  // Auto-switch to PR tab when PR mode selected
+  const handleModeChange = (newMode: AnalysisMode) => {
+    setMode(newMode);
+    if (newMode === "pr_diff" && activeTab !== "pr") {
+      setActiveTab("pr");
+    } else if (newMode !== "pr_diff" && activeTab === "pr") {
+      setActiveTab("paste");
+    }
   };
 
   return (
@@ -129,7 +145,7 @@ const Index = () => {
             <span className="text-primary">in seconds</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Paste your code, fetch from GitHub, or upload files. Get instant AI-powered
+            Paste your code, fetch from GitHub, review PRs, or upload files. Get instant AI-powered
             architecture analysis, security audits, performance reviews, and more.
           </p>
         </div>
@@ -137,19 +153,22 @@ const Index = () => {
         {/* Analysis Mode Selector */}
         <div className="mb-6">
           <p className="text-sm text-muted-foreground text-center mb-3">Choose analysis mode</p>
-          <AnalysisModeSelector value={mode} onChange={setMode} />
+          <AnalysisModeSelector value={mode} onChange={handleModeChange} />
         </div>
 
-        <div className="mb-8">
-          <p className="text-sm text-muted-foreground text-center mb-2">Try an example</p>
-          <ExampleSnippets onSelect={handleExampleSelect} />
-        </div>
+        {mode !== "pr_diff" && (
+          <div className="mb-8">
+            <p className="text-sm text-muted-foreground text-center mb-2">Try an example</p>
+            <ExampleSnippets onSelect={handleExampleSelect} />
+          </div>
+        )}
 
         <div className="bg-card border border-border/50 rounded-xl p-6 glow-primary">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4 bg-muted/50">
               <TabsTrigger value="paste" className="text-xs">Paste Code</TabsTrigger>
               <TabsTrigger value="github" className="text-xs">GitHub Repo</TabsTrigger>
+              <TabsTrigger value="pr" className="text-xs">PR Review</TabsTrigger>
             </TabsList>
             <TabsContent value="paste">
               <CodeInput onSubmit={handlePasteSubmit} isLoading={isLoading} />
@@ -161,6 +180,9 @@ const Index = () => {
                 </p>
                 <GitHubInput onCodeFetched={handleGitHubFetch} isLoading={isLoading} />
               </div>
+            </TabsContent>
+            <TabsContent value="pr">
+              <PRInput onDiffFetched={handlePRFetch} isLoading={isLoading} />
             </TabsContent>
           </Tabs>
         </div>
@@ -181,31 +203,36 @@ const Index = () => {
         )}
 
         {!output && !isLoading && (
-          <div className="grid md:grid-cols-3 gap-6 mt-16">
+          <div className="grid md:grid-cols-4 gap-4 mt-16">
             {[
               {
                 title: "Architecture Analysis",
-                description: "Identifies patterns, modules, and system design from your code structure.",
+                description: "Patterns, modules, and system design with visual diagrams.",
                 icon: "🏗️",
               },
               {
                 title: "Security Audit",
-                description: "Scans for vulnerabilities, hardcoded secrets, injection risks, and more.",
+                description: "Vulnerabilities, hardcoded secrets, and injection risks.",
                 icon: "🛡️",
               },
               {
                 title: "Performance Review",
-                description: "Finds N+1 queries, memory leaks, missing memoization, and bottlenecks.",
+                description: "N+1 queries, memory leaks, and bottlenecks.",
                 icon: "⚡",
+              },
+              {
+                title: "PR Review",
+                description: "Diff analysis, impact assessment, and regression detection.",
+                icon: "🔀",
               },
             ].map((feature) => (
               <div
                 key={feature.title}
-                className="bg-card border border-border/50 rounded-xl p-6 hover:border-primary/30 transition-colors"
+                className="bg-card border border-border/50 rounded-xl p-5 hover:border-primary/30 transition-colors"
               >
                 <span className="text-2xl mb-3 block">{feature.icon}</span>
-                <h3 className="font-semibold mb-1">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                <h3 className="font-semibold mb-1 text-sm">{feature.title}</h3>
+                <p className="text-xs text-muted-foreground">{feature.description}</p>
               </div>
             ))}
           </div>

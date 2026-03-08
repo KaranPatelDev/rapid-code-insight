@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { owner, repo, token } = await req.json();
+    const { owner, repo, token, pr_number } = await req.json();
     if (!owner || !repo) {
       return new Response(
         JSON.stringify({ error: "owner and repo are required" }),
@@ -18,10 +18,72 @@ serve(async (req) => {
       );
     }
 
-    // Fetch repo tree using GitHub API (public repos, no auth needed)
+    const headers: Record<string, string> = {
+      Accept: "application/vnd.github.v3+json",
+      "User-Agent": "CodeLens-AI",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    // PR diff mode
+    if (pr_number) {
+      // Fetch PR metadata
+      const prResp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/pulls/${pr_number}`,
+        { headers }
+      );
+      if (!prResp.ok) {
+        return new Response(
+          JSON.stringify({ error: prResp.status === 404 ? "PR not found or repository is private" : "Failed to fetch PR" }),
+          { status: prResp.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const prData = await prResp.json();
+
+      // Fetch PR diff
+      const diffResp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/pulls/${pr_number}`,
+        { headers: { ...headers, Accept: "application/vnd.github.v3.diff" } }
+      );
+      const diff = diffResp.ok ? await diffResp.text() : "Could not fetch diff";
+
+      // Fetch PR files for summary
+      const filesResp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/pulls/${pr_number}/files?per_page=100`,
+        { headers }
+      );
+      const files = filesResp.ok ? await filesResp.json() : [];
+
+      let content = `# Pull Request: ${prData.title}\n\n`;
+      content += `**Author**: ${prData.user?.login}\n`;
+      content += `**Base**: ${prData.base?.ref} ← **Head**: ${prData.head?.ref}\n`;
+      content += `**Status**: ${prData.state} | **Mergeable**: ${prData.mergeable ?? "unknown"}\n`;
+      content += `**Changed files**: ${prData.changed_files} | **Additions**: +${prData.additions} | **Deletions**: -${prData.deletions}\n\n`;
+
+      if (prData.body) {
+        content += `## PR Description\n${prData.body}\n\n`;
+      }
+
+      content += `## Files Changed\n`;
+      for (const f of files) {
+        content += `- \`${f.filename}\` (+${f.additions}/-${f.deletions}) [${f.status}]\n`;
+      }
+      content += `\n`;
+
+      // Truncate diff if too large
+      const maxDiffSize = 50000;
+      const truncatedDiff = diff.length > maxDiffSize ? diff.slice(0, maxDiffSize) + "\n\n... (diff truncated)" : diff;
+      content += `## Diff\n\`\`\`diff\n${truncatedDiff}\n\`\`\`\n`;
+
+      return new Response(
+        JSON.stringify({ content, title: prData.title }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Regular repo fetch (existing logic)
     const treeResp = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`,
-      { headers: { Accept: "application/vnd.github.v3+json", "User-Agent": "CodeLens-AI", ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
+      { headers }
     );
 
     if (!treeResp.ok) {
@@ -36,7 +98,6 @@ serve(async (req) => {
     const treeData = await treeResp.json();
     const tree = treeData.tree || [];
 
-    // Filter to code files only, skip large/binary files
     const codeExtensions = new Set([
       ".ts", ".tsx", ".js", ".jsx", ".py", ".rs", ".go", ".java", ".rb", ".php",
       ".css", ".scss", ".html", ".json", ".yaml", ".yml", ".toml", ".md", ".txt",
@@ -50,16 +111,13 @@ serve(async (req) => {
       .filter((item: any) => {
         if (item.type !== "blob") return false;
         const path = item.path as string;
-        // Skip files in ignored directories
         if (path.split("/").some((seg: string) => skipDirs.has(seg))) return false;
-        // Check extension or known config files
         const ext = "." + path.split(".").pop()?.toLowerCase();
         const basename = path.split("/").pop()?.toLowerCase() || "";
         return codeExtensions.has(ext) || ["dockerfile", "makefile", "procfile", "gemfile", "rakefile"].includes(basename);
       })
-      .slice(0, 40); // Limit to 40 files to stay within token limits
+      .slice(0, 40);
 
-    // Build file structure overview
     let content = `# Repository: ${owner}/${repo}\n\n`;
     content += `## File Structure\n\`\`\`\n`;
     for (const item of tree.filter((i: any) => i.type === "blob").slice(0, 200)) {
@@ -67,11 +125,9 @@ serve(async (req) => {
     }
     content += `\`\`\`\n\n`;
 
-    // Fetch important files content (limit total size)
     let totalSize = 0;
-    const maxTotalSize = 60000; // ~60KB of code
+    const maxTotalSize = 60000;
 
-    // Prioritize key files
     const priorityFiles = ["package.json", "Cargo.toml", "go.mod", "requirements.txt", "pyproject.toml", "README.md"];
     const sortedFiles = [...codeFiles].sort((a: any, b: any) => {
       const aName = a.path.split("/").pop() || "";
@@ -83,13 +139,12 @@ serve(async (req) => {
 
     for (const file of sortedFiles) {
       if (totalSize >= maxTotalSize) break;
-      // Skip files larger than 10KB
       if (file.size && file.size > 10000) continue;
 
       try {
         const fileResp = await fetch(
           `https://api.github.com/repos/${owner}/${repo}/contents/${file.path}`,
-          { headers: { Accept: "application/vnd.github.v3.raw", "User-Agent": "CodeLens-AI", ...(token ? { Authorization: `Bearer ${token}` } : {}) } }
+          { headers: { ...headers, Accept: "application/vnd.github.v3.raw" } }
         );
         if (fileResp.ok) {
           const fileContent = await fileResp.text();

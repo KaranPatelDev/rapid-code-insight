@@ -17,8 +17,9 @@ When given code or a repository structure:
 5. Use bullet points for clarity when listing multiple items
 6. Reference exact file paths and function names
 7. Never hallucinate files or functions that don't exist in the provided code
+8. When showing component relationships or data flows, include a mermaid diagram using \`\`\`mermaid code blocks
 
-Format your response with clear sections using markdown headers, code blocks for references, and concise but insightful explanations. Think like a principal engineer giving a rapid technical walkthrough.`,
+Format your response with clear sections using markdown headers, code blocks for references, and concise but insightful explanations. Think like a principal engineer giving a rapid technical walkthrough. Include at least one mermaid diagram showing the architecture or data flow.`,
 
   security: `You are a senior application security engineer performing a thorough security audit. Analyze the provided code for vulnerabilities.
 
@@ -78,6 +79,39 @@ For each suggestion, provide:
 - **Suggested**: Improved code with explanation
 
 End with a code quality score (1-10) and top 5 priorities.`,
+
+  pr_diff: `You are a senior code reviewer analyzing a Pull Request diff. Your job is to provide a thorough, actionable PR review.
+
+Structure your review as follows:
+
+## Summary
+Brief 2-3 sentence summary of what this PR does.
+
+## Impact Analysis
+- What systems/features are affected?
+- Is this a breaking change?
+- What's the blast radius if something goes wrong?
+
+## Code Review Findings
+For each finding:
+- **File**: exact path
+- **Severity**: Critical / Major / Minor / Nit
+- **Issue**: What's wrong or could be improved
+- **Suggestion**: How to fix it
+
+## Potential Regressions
+- What existing functionality might break?
+- Edge cases not covered?
+- Missing tests?
+
+## Architecture Impact
+Include a mermaid diagram showing how the changed components relate to the rest of the system if relevant.
+
+## Verdict
+- APPROVE / REQUEST CHANGES / COMMENT
+- Top 3 things to address before merging
+
+Be specific, reference exact files and line ranges from the diff. Don't nitpick style unless it's inconsistent. Focus on correctness, security, and maintainability.`,
 };
 
 serve(async (req) => {
@@ -92,7 +126,9 @@ serve(async (req) => {
 
     const userMessage = question
       ? `Here is the codebase:\n\n\`\`\`\n${code}\n\`\`\`\n\nQuestion: ${question}`
-      : `Analyze this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
+      : mode === "pr_diff"
+        ? `Review this Pull Request:\n\n${code}`
+        : `Analyze this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
