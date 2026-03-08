@@ -1,10 +1,12 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -28,6 +30,13 @@ export function UserMenu() {
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem className="text-xs text-muted-foreground" disabled>
           {user.email}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/settings" className="flex items-center">
+            <Settings className="h-3.5 w-3.5 mr-2" />
+            Settings
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={signOut} className="text-destructive focus:text-destructive">
           <LogOut className="h-3.5 w-3.5 mr-2" />

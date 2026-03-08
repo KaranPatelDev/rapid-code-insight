@@ -18,6 +18,7 @@ import { streamAnalysis } from "@/lib/streaming";
 import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserPlan } from "@/hooks/useUserPlan";
+import { useUsage } from "@/hooks/useUsage";
 import { Braces, BarChart3, BookOpen, Puzzle, Lock, Palette } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,8 +35,13 @@ const Index = () => {
   const sourceRef = useRef<"paste" | "github" | "file" | "example">("paste");
   const { user } = useAuth();
   const { hasPRReview, hasMultiRepo, hasHistory, hasFollowUp } = useUserPlan();
+  const { canAnalyze, refresh: refreshUsage } = useUsage();
 
   const handleAnalyze = useCallback(async (code: string, question?: string, images?: string[]) => {
+    if (!canAnalyze) {
+      setUpgradeFeature("More Analyses");
+      return;
+    }
     setOutput("");
     setIsLoading(true);
     codeRef.current = code;
@@ -55,6 +61,7 @@ const Index = () => {
         },
         onDone: () => {
           setIsLoading(false);
+          refreshUsage();
           if (fullOutput.length > 20 && user && hasHistory) {
             addToHistory(
               {
@@ -78,7 +85,7 @@ const Index = () => {
       toast.error("Failed to connect to analysis service.");
       setIsLoading(false);
     }
-  }, [mode, user, hasHistory]);
+  }, [mode, user, hasHistory, canAnalyze, refreshUsage]);
 
   const handleExampleSelect = (code: string) => {
     sourceRef.current = "example";
