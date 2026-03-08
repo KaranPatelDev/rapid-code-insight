@@ -57,6 +57,8 @@ const App = () => (
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/s/:shortId" element={<SharedAnalysis />} />
+                <Route path="/widget" element={<Widget />} />
+                <Route path="/bookmarklet" element={<Bookmarklet />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
