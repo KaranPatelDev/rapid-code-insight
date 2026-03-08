@@ -1,32 +1,14 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useUsage } from "@/hooks/useUsage";
 import { useAuth } from "@/hooks/useAuth";
-import { useUserPlan } from "@/hooks/useUserPlan";
 import { Zap } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function UsageIndicator() {
   const { user } = useAuth();
-  const { dailyLimit, plan } = useUserPlan();
-  const [count, setCount] = useState<number | null>(null);
+  const { count, dailyLimit, remaining, isUnlimited, plan, loading } = useUsage();
 
-  useEffect(() => {
-    if (!user) return;
-    const today = new Date().toISOString().split("T")[0];
-    supabase
-      .from("daily_usage")
-      .select("analysis_count")
-      .eq("user_id", user.id)
-      .eq("usage_date", today)
-      .maybeSingle()
-      .then(({ data }) => setCount(data?.analysis_count ?? 0));
-  }, [user]);
+  if (!user || loading) return null;
 
-  if (count === null) return null;
-
-  // Unlimited for team plan
-  const isUnlimited = dailyLimit === 0;
-  const remaining = isUnlimited ? Infinity : Math.max(0, dailyLimit - count);
   const pct = isUnlimited ? 0 : (count / dailyLimit) * 100;
   const isLow = !isUnlimited && remaining <= 2;
 
