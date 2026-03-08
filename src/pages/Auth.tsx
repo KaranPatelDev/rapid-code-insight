@@ -39,6 +39,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead title="Sign In" description="Sign in to CodeLens AI to analyze code, track history, and share insights." />
       <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
