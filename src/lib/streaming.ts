@@ -3,12 +3,14 @@ const ANALYZE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-c
 export async function streamAnalysis({
   code,
   question,
+  mode,
   onDelta,
   onDone,
   onError,
 }: {
   code: string;
   question?: string;
+  mode?: string;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (error: string) => void;
@@ -19,7 +21,7 @@ export async function streamAnalysis({
       "Content-Type": "application/json",
       Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
-    body: JSON.stringify({ code, question }),
+    body: JSON.stringify({ code, question, mode: mode || "architecture" }),
   });
 
   if (!resp.ok) {

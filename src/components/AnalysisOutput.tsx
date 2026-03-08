@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/ShareButton";
 import hljs from "highlight.js/lib/core";
@@ -65,6 +65,16 @@ export function AnalysisOutput({ content, isStreaming, shareData }: AnalysisOutp
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleExportMarkdown = () => {
+    const blob = new Blob([content], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${shareData?.title || "analysis"}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (!content && !isStreaming) return null;
 
   return (
@@ -77,6 +87,12 @@ export function AnalysisOutput({ content, isStreaming, shareData }: AnalysisOutp
           </span>
         </div>
         <div className="flex items-center gap-1">
+          {content && !isStreaming && (
+            <Button variant="ghost" size="sm" onClick={handleExportMarkdown} className="text-muted-foreground hover:text-foreground">
+              <Download className="h-3.5 w-3.5" />
+              <span className="ml-1 text-xs">Export</span>
+            </Button>
+          )}
           {content && !isStreaming && shareData && (
             <ShareButton
               title={shareData.title}
