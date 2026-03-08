@@ -246,8 +246,21 @@ const Index = () => {
           } : undefined}
         />
 
-        {output && !isLoading && codeRef.current && hasFollowUp && (
-          <FollowUpInput onSubmit={handleFollowUp} isLoading={isLoading} />
+        {output && !isLoading && codeRef.current && (
+          hasFollowUp ? (
+            <FollowUpInput onSubmit={handleFollowUp} isLoading={isLoading} />
+          ) : (
+            <div
+              className="mt-6 p-4 border border-border/50 rounded-xl bg-card text-center cursor-pointer hover:border-primary/30 transition-colors"
+              onClick={() => setUpgradeFeature("Follow-up Questions")}
+            >
+              <p className="text-sm text-muted-foreground">
+                <Lock className="h-3.5 w-3.5 inline mr-1 -mt-0.5" />
+                Follow-up questions are available on <span className="font-medium text-foreground">Pro</span> and above.{" "}
+                <span className="text-primary underline underline-offset-2">Upgrade now</span>
+              </p>
+            </div>
+          )
         )}
 
         {!output && !isLoading && (
