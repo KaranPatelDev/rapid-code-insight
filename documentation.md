@@ -56,7 +56,8 @@ CodeLens AI is a web application that lets developers paste code, connect GitHub
 
 | Capability | Description |
 |---|---|
-| 13 analysis modes | Architecture, security, debugging, test gen, documentation, and more |
+| 14 analysis modes | Architecture, security, debugging, test gen, documentation, UI/UX review, and more |
+| Figma/design input | Provide Figma links or paste/upload frontend code for UI/UX analysis |
 | GitHub integration | Fetch public/private repos and PR diffs directly |
 | Multi-repo analysis | Analyze 2–5 repositories together as a system |
 | Streaming output | Real-time AI response streaming with Mermaid diagram rendering |
