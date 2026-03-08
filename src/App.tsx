@@ -20,6 +20,7 @@ const SharedAnalysis = lazy(() => import("./pages/SharedAnalysis"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Widget = lazy(() => import("./pages/Widget"));
 const Bookmarklet = lazy(() => import("./pages/Bookmarklet"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 const Loading = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
