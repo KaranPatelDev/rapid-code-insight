@@ -16,8 +16,15 @@ export function MultiRepoInput({ onCodeFetched, isLoading }: MultiRepoInputProps
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState("");
 
+  const normalizeUrl = (input: string): string => {
+    let cleaned = input.trim().replace(/\/$/, "").replace(/\.git$/, "");
+    if (cleaned.startsWith("github.com")) cleaned = "https://" + cleaned;
+    cleaned = cleaned.replace(/(github\.com\/[^\/\s]+\/[^\/\s]+)\/(tree|blob|commits|issues|pulls|actions|wiki|releases|tags|compare|settings)(\/.*)?$/, "$1");
+    return cleaned;
+  };
+
   const parseGitHubUrl = (input: string): { owner: string; repo: string } | null => {
-    const cleaned = input.trim().replace(/\/$/, "").replace(/\.git$/, "");
+    const cleaned = normalizeUrl(input);
     const fullMatch = cleaned.match(/github\.com\/([^\/\s]+)\/([^\/\s]+)/);
     if (fullMatch) return { owner: fullMatch[1], repo: fullMatch[2] };
     const shortMatch = cleaned.match(/^([^\/.\s]+)\/([^\/\s]+)$/);

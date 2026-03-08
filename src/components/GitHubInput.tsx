@@ -16,12 +16,19 @@ export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState("");
 
+  const normalizeUrl = (input: string): string => {
+    let cleaned = input.trim().replace(/\/$/, "").replace(/\.git$/, "");
+    // Fix missing protocol
+    if (cleaned.startsWith("github.com")) cleaned = "https://" + cleaned;
+    // Strip tree/branch paths: github.com/owner/repo/tree/main/... → github.com/owner/repo
+    cleaned = cleaned.replace(/(github\.com\/[^\/\s]+\/[^\/\s]+)\/(tree|blob|commits|issues|pulls|actions|wiki|releases|tags|compare|settings)(\/.*)?$/, "$1");
+    return cleaned;
+  };
+
   const parseGitHubUrl = (input: string): { owner: string; repo: string } | null => {
-    const cleaned = input.trim().replace(/\/$/, "").replace(/\.git$/, "");
-    // First try full GitHub URL
+    const cleaned = normalizeUrl(input);
     const fullMatch = cleaned.match(/github\.com\/([^\/\s]+)\/([^\/\s]+)/);
     if (fullMatch) return { owner: fullMatch[1], repo: fullMatch[2] };
-    // Then try owner/repo format (must not contain dots to avoid matching domains)
     const shortMatch = cleaned.match(/^([^\/.\s]+)\/([^\/\s]+)$/);
     if (shortMatch) return { owner: shortMatch[1], repo: shortMatch[2] };
     return null;
