@@ -35,7 +35,7 @@ export function GitHubInput({ onCodeFetched, isLoading }: GitHubInputProps) {
     setFetching(true);
     try {
       const { data, error: fnError } = await supabase.functions.invoke("fetch-github", {
-        body: { owner: parsed.owner, repo: parsed.repo },
+        body: { owner: parsed.owner, repo: parsed.repo, ...(token ? { token } : {}) },
       });
 
       if (fnError) throw fnError;
