@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Github, Loader2 } from "lucide-react";
+import { Github, Loader2, KeyRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface GitHubInputProps {
