@@ -607,7 +607,7 @@ export default function Guide() {
 
       <footer className="border-t border-border/50 mt-8">
         <div className="max-w-6xl mx-auto px-4 py-6 text-center text-xs text-muted-foreground">
-          Powered by AI · Built with Lovable
+          Powered by AI · Built by Karan
         </div>
       </footer>
     </div>
