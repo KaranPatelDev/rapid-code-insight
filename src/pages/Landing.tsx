@@ -5,7 +5,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
   Braces, Shield, Bug, TestTube, Wrench, GitPullRequest,
-  Layers, Zap, ArrowRight, Star, Check, BookOpen
+  Layers, Zap, ArrowRight, Star, Check, BookOpen,
+  ClipboardPaste, Github, GitMerge, MousePointerClick, Eye, Download
 } from "lucide-react";
 
 const fadeUp = {
