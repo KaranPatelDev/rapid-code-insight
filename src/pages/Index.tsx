@@ -7,6 +7,7 @@ import { ExampleSnippets } from "@/components/ExampleSnippets";
 import { GitHubInput } from "@/components/GitHubInput";
 import { PRInput } from "@/components/PRInput";
 import { MultiRepoInput } from "@/components/MultiRepoInput";
+import { FigmaInput } from "@/components/FigmaInput";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { HistoryPanel } from "@/components/HistoryPanel";
 import { FollowUpInput } from "@/components/FollowUpInput";
