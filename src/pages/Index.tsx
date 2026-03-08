@@ -5,9 +5,11 @@ import { ExampleSnippets } from "@/components/ExampleSnippets";
 import { GitHubInput } from "@/components/GitHubInput";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { HistoryPanel } from "@/components/HistoryPanel";
+import { FollowUpInput } from "@/components/FollowUpInput";
+import { UserMenu } from "@/components/UserMenu";
 import { streamAnalysis } from "@/lib/streaming";
 import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
-import { Braces, Terminal, GitBranch } from "lucide-react";
+import { Braces } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -37,7 +39,6 @@ const Index = () => {
         },
         onDone: () => {
           setIsLoading(false);
-          // Save to history
           if (fullOutput.length > 20) {
             addToHistory({
               title: generateTitle(codeRef.current, questionRef.current),
@@ -76,12 +77,23 @@ const Index = () => {
   };
 
   const handleHistorySelect = (entry: HistoryEntry) => {
+    codeRef.current = entry.code;
+    questionRef.current = entry.question;
+    sourceRef.current = entry.source;
     setOutput(entry.output);
+  };
+
+  const handleFollowUp = (question: string) => {
+    if (!codeRef.current) {
+      toast.error("No code context. Analyze some code first.");
+      return;
+    }
+    questionRef.current = question;
+    handleAnalyze(codeRef.current, question);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -94,11 +106,11 @@ const Index = () => {
           <div className="flex items-center gap-1">
             <HistoryPanel onSelect={handleHistorySelect} />
             <ThemeToggle />
+            <UserMenu />
           </div>
         </div>
       </header>
 
-      {/* Hero */}
       <main className="max-w-5xl mx-auto px-4 py-12">
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
@@ -112,13 +124,11 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Try examples */}
         <div className="mb-8">
           <p className="text-sm text-muted-foreground text-center mb-2">Try an example</p>
           <ExampleSnippets onSelect={handleExampleSelect} />
         </div>
 
-        {/* Input with tabs */}
         <div className="bg-card border border-border/50 rounded-xl p-6 glow-primary">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4 bg-muted/50">
@@ -131,7 +141,7 @@ const Index = () => {
             <TabsContent value="github">
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Enter a public GitHub repository URL to fetch and analyze its code.
+                  Enter a public or private GitHub repository URL to fetch and analyze its code.
                 </p>
                 <GitHubInput onCodeFetched={handleGitHubFetch} isLoading={isLoading} />
               </div>
@@ -139,7 +149,6 @@ const Index = () => {
           </Tabs>
         </div>
 
-        {/* Output */}
         <AnalysisOutput
           content={output}
           isStreaming={isLoading}
@@ -151,7 +160,11 @@ const Index = () => {
           } : undefined}
         />
 
-        {/* Features */}
+        {/* Follow-up questions */}
+        {output && !isLoading && codeRef.current && (
+          <FollowUpInput onSubmit={handleFollowUp} isLoading={isLoading} />
+        )}
+
         {!output && !isLoading && (
           <div className="grid md:grid-cols-3 gap-6 mt-16">
             {[
@@ -184,7 +197,6 @@ const Index = () => {
         )}
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-border/50 mt-20">
         <div className="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-muted-foreground">
           Powered by AI · Built with Lovable
