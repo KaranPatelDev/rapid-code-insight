@@ -299,7 +299,7 @@ const Index = () => {
 
       <footer className="border-t border-border/50 mt-16">
         <div className="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-muted-foreground">
-          Powered by AI · Built by Karan
+          Powered by AI · Built with Lovable
         </div>
       </footer>
     </div>
