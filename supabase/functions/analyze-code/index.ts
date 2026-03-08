@@ -224,7 +224,93 @@ Include a mermaid diagram if relevant.
 - Top 3 things to address before merging
 
 Be specific, reference exact files and line ranges.`,
+
+  documentation: `You are a senior technical writer generating production-grade documentation for a codebase. Generate a complete, publish-ready README.md and supplementary docs.
+
+Deliverables (output as a single markdown document):
+
+# Project Name
+
+## Overview
+- 1-2 paragraph executive summary of what this project does, who it's for, and why it exists.
+
+## Table of Contents
+- Auto-generated from all sections below.
+
+## Architecture
+- High-level system architecture with a \`\`\`mermaid graph TD diagram
+- Key design decisions and rationale
+- Technology stack breakdown
+
+## Getting Started
+### Prerequisites
+- List all required tools, runtimes, and versions
+### Installation
+- Step-by-step setup instructions with shell commands
+### Configuration
+- Environment variables table (name, description, required, default)
+### Running Locally
+- Dev server, build, and test commands
+
+## Project Structure
+- Directory tree with descriptions of each major folder/file
+- Use code blocks for the tree
+
+## API Reference
+- For each endpoint/function: method, path, parameters, request/response examples
+- Use tables for parameters
+- Include authentication requirements
+
+## Data Flow
+- End-to-end request lifecycle with a \`\`\`mermaid sequence diagram
+- Show how data moves from user input through the system to response
+
+## Component Documentation (if frontend)
+- Key components with their props, usage examples
+- State management patterns
+- Routing structure with a \`\`\`mermaid flowchart
+
+## Database Schema (if applicable)
+- Entity relationship diagram using \`\`\`mermaid erDiagram
+- Table descriptions with column details
+
+## Authentication & Authorization
+- Auth flow diagram using \`\`\`mermaid sequence diagram
+- Role-based access patterns
+
+## Deployment
+- Deployment architecture with \`\`\`mermaid diagram
+- CI/CD pipeline description
+- Environment-specific configurations
+
+## Testing
+- Testing strategy and frameworks used
+- How to run tests
+- Coverage expectations
+
+## Troubleshooting
+- Common issues and solutions in a table format
+- Debug tips
+
+## Contributing
+- Code style guidelines
+- PR process
+- Branch naming conventions
+
+## Changelog
+- Version history template
+
+---
+
+IMPORTANT RULES:
+- Include AT LEAST 4 mermaid diagrams (architecture, data flow, ER diagram, deployment)
+- Every section must have real, specific content based on the actual code — no placeholders
+- Use proper markdown formatting: tables, code blocks, badges, links
+- Write for a developer who has never seen this codebase
+- Make it comprehensive enough to onboard a new team member
+- Include copy-pasteable commands wherever possible`,
 };
+
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
