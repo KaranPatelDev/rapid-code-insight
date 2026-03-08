@@ -369,7 +369,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { code, question, mode = "architecture" } = body;
+    const { code, question, mode = "architecture", images } = body;
 
     // --- Input validation ---
     if (!code || typeof code !== "string") {
