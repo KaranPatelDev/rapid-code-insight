@@ -1,5 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
-
 const ANALYZE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-code`;
 
 export async function streamAnalysis({
@@ -19,16 +17,11 @@ export async function streamAnalysis({
   onDone: () => void;
   onError: (error: string) => void;
 }) {
-  // Get the current user's session token for proper auth & usage tracking
-  const { data: { session } } = await supabase.auth.getSession();
-  const token = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
   const resp = await fetch(ANALYZE_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
     body: JSON.stringify({ code, question, mode: mode || "architecture", images }),
   });
@@ -36,11 +29,11 @@ export async function streamAnalysis({
   if (!resp.ok) {
     const errorData = await resp.json().catch(() => ({}));
     if (resp.status === 429) {
-      onError(errorData.error || "Daily analysis limit reached. Upgrade your plan for more.");
+      onError("Rate limit exceeded. Please wait a moment and try again.");
       return;
     }
     if (resp.status === 402) {
-      onError("Usage limit reached. Please upgrade your plan to continue.");
+      onError("Usage limit reached. Please add credits to continue.");
       return;
     }
     onError(errorData.error || "Analysis failed. Please try again.");

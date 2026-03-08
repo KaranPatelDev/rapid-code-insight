@@ -20,7 +20,6 @@ const SharedAnalysis = lazy(() => import("./pages/SharedAnalysis"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Widget = lazy(() => import("./pages/Widget"));
 const Bookmarklet = lazy(() => import("./pages/Bookmarklet"));
-const Settings = lazy(() => import("./pages/Settings"));
 
 const Loading = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -70,7 +69,6 @@ const App = () => (
                   <Route path="/s/:shortId" element={<SharedAnalysis />} />
                   <Route path="/widget" element={<Widget />} />
                   <Route path="/bookmarklet" element={<Bookmarklet />} />
-                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
