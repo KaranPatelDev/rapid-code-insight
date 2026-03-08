@@ -1,6 +1,6 @@
 # CodeLens AI — Documentation
 
-> **AI-powered code analysis platform** with 13 specialized modes including architecture visualization, security scanning, AI debugging, documentation generation, PR review, and multi-repository understanding.
+> **AI-powered code analysis platform** with 14 specialized modes including architecture visualization, security scanning, AI debugging, documentation generation, UI/UX review, UI/UX review, PR review, and multi-repository understanding.
 
 **Live URL**: [https://rapid-code-insight.lovable.app](https://rapid-code-insight.lovable.app)
 
@@ -30,6 +30,7 @@
   - [Analyzing a GitHub Repository](#analyzing-a-github-repository)
   - [Reviewing a Pull Request](#reviewing-a-pull-request)
   - [Multi-Repository Analysis](#multi-repository-analysis)
+  - [UI/UX Design Review](#uiux-design-review)
   - [Generating Documentation](#generating-documentation)
   - [Follow-Up Questions](#follow-up-questions)
   - [Sharing Analyses](#sharing-analyses)
@@ -50,13 +51,14 @@
 
 ## Overview
 
-CodeLens AI is a web application that lets developers paste code, connect GitHub repositories, or submit Pull Request URLs — and instantly receive AI-powered analysis across 13 specialized modes. Results include rich markdown with inline Mermaid diagrams, syntax-highlighted code blocks, and actionable insights.
+CodeLens AI is a web application that lets developers paste code, connect GitHub submit Pull Request URLs, or provide Figma designs — and instantly receive AI-powered analysis across 14ysis across 13 specialized modes. Results include rich markdown with inline Mermaid diagrams, syntax-highlighted code blocks, and actionable insights.
 
 ### Key Capabilities
 
 | Capability | Description |
 |---|---|
-| 13 analysis modes | Architecture, security, debugging, test gen, documentation, and more |
+| 14 analysis modes | Architecture, security, debugging, test gen, documentation, UI/UX review, and more |
+| Figma/design input | Provide Figma links or paste/upload frontend code for UI/UX analysis |
 | GitHub integration | Fetch public/private repos and PR diffs directly |
 | Multi-repo analysis | Analyze 2–5 repositories together as a system |
 | Streaming output | Real-time AI response streaming with Mermaid diagram rendering |
@@ -70,7 +72,7 @@ CodeLens AI is a web application that lets developers paste code, connect GitHub
 
 ## Features
 
-### Analysis Modes (13 total)
+### Analysis Modes (14 total)
 
 | Category | Mode | Description |
 |---|---|---|
@@ -87,6 +89,7 @@ CodeLens AI is a web application that lets developers paste code, connect GitHub
 | **Improve** | Test Generation | Generate unit, integration, and component tests |
 | **Improve** | Documentation | Production-grade markdown docs with diagrams |
 | **Review** | PR Review | Diff analysis with verdict and regression detection |
+| **Review** | UI/UX Review | Design feedback, accessibility, visual hierarchy analysis |
 
 ---
 
@@ -97,7 +100,7 @@ CodeLens AI uses a three-tier pricing model with server-side enforcement.
 | Feature | Free | Pro ($19/mo) | Team ($49/mo) |
 |---|:---:|:---:|:---:|
 | Daily analyses | 5 | 50 | Unlimited |
-| All 13 analysis modes | ✅ | ✅ | ✅ |
+| All 14 analysis modes | ✅ | ✅ | ✅ |
 | GitHub repo support | ✅ | ✅ | ✅ |
 | Share results | ✅ | ✅ | ✅ |
 | PR review | — | ✅ | ✅ |
@@ -376,12 +379,13 @@ codelens-ai/
 │   │   └── NotFound.tsx             # 404 page
 │   │
 │   ├── components/                  # Reusable UI components
-│   │   ├── AnalysisModeSelector.tsx # 13-mode grid selector
+│   │   ├── AnalysisModeSelector.tsx # 14-mode grid selector
 │   │   ├── AnalysisOutput.tsx       # Markdown renderer with Mermaid + syntax highlighting
 │   │   ├── CodeInput.tsx            # Code paste textarea with submit
 │   │   ├── GitHubInput.tsx          # GitHub repo URL input with parsed preview
 │   │   ├── PRInput.tsx              # Pull Request URL input with parsed preview
 │   │   ├── MultiRepoInput.tsx       # Multi-repository URL input (2-5 repos)
+│   │   ├── FigmaInput.tsx           # Figma link or paste/upload input for UI/UX review
 │   │   ├── ExampleSnippets.tsx      # Pre-built code examples for quick start
 │   │   ├── FollowUpInput.tsx        # Follow-up question input after analysis
 │   │   ├── HistoryPanel.tsx         # Sliding panel with searchable history
@@ -416,7 +420,7 @@ codelens-ai/
 │   ├── config.toml                  # Supabase project configuration
 │   └── functions/                   # Supabase Edge Functions (Deno)
 │       ├── analyze-code/
-│       │   └── index.ts             # AI analysis engine (13 mode prompts)
+│       │   └── index.ts             # AI analysis engine (14 mode prompts)
 │       └── fetch-github/
 │           └── index.ts             # GitHub API fetcher (repo + PR)
 │
@@ -564,6 +568,16 @@ Authenticated users are redirected to the main analysis page (`Index.tsx`) via t
 3. Each valid URL shows a green ✓ with the parsed owner/repo
 4. Click **"Fetch & Analyze"**
 5. The AI analyzes how the repositories interact as a system
+
+### UI/UX Design Review
+
+1. Select the **"UI/UX Review"** mode from the mode grid (under "Review") — the tab auto-switches to **"UI/UX Design"**
+2. Choose an input method:
+   - **Figma Link**: Paste a Figma file/design/prototype URL (e.g., `figma.com/design/...`)
+   - **Paste / Upload**: Paste frontend code (HTML/CSS/React), Figma exported tokens, or design specs — or drag-and-drop / upload design files (`.fig`, `.sketch`, `.xd`, `.css`, `.html`, `.tsx`, `.json`, etc.)
+3. Optionally type a specific design question
+4. Click **"Review UI/UX Design"**
+5. The AI analyzes for visual hierarchy, accessibility (WCAG), interaction patterns, responsive design, and provides actionable improvement suggestions
 
 ### Generating Documentation
 
