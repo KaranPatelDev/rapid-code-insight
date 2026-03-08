@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyses: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          mode: string
+          output: string
+          question: string | null
+          source: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          mode?: string
+          output: string
+          question?: string | null
+          source?: string
+          title?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          mode?: string
+          output?: string
+          question?: string | null
+          source?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

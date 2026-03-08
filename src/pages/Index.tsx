@@ -7,8 +7,10 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { HistoryPanel } from "@/components/HistoryPanel";
 import { FollowUpInput } from "@/components/FollowUpInput";
 import { UserMenu } from "@/components/UserMenu";
+import { AnalysisModeSelector, AnalysisMode } from "@/components/AnalysisModeSelector";
 import { streamAnalysis } from "@/lib/streaming";
 import { addToHistory, generateTitle, HistoryEntry } from "@/lib/history";
+import { useAuth } from "@/hooks/useAuth";
 import { Braces } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,9 +19,11 @@ const Index = () => {
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("paste");
+  const [mode, setMode] = useState<AnalysisMode>("architecture");
   const codeRef = useRef("");
   const questionRef = useRef<string | undefined>();
   const sourceRef = useRef<"paste" | "github" | "file" | "example">("paste");
+  const { user } = useAuth();
 
   const handleAnalyze = useCallback(async (code: string, question?: string) => {
     setOutput("");
@@ -33,20 +37,25 @@ const Index = () => {
       await streamAnalysis({
         code,
         question,
+        mode,
         onDelta: (text) => {
           fullOutput += text;
           setOutput((prev) => prev + text);
         },
         onDone: () => {
           setIsLoading(false);
-          if (fullOutput.length > 20) {
-            addToHistory({
-              title: generateTitle(codeRef.current, questionRef.current),
-              code: codeRef.current,
-              question: questionRef.current,
-              output: fullOutput,
-              source: sourceRef.current,
-            });
+          if (fullOutput.length > 20 && user) {
+            addToHistory(
+              {
+                title: generateTitle(codeRef.current, questionRef.current),
+                code: codeRef.current,
+                question: questionRef.current,
+                output: fullOutput,
+                source: sourceRef.current,
+                mode,
+              },
+              user.id
+            );
           }
         },
         onError: (error) => {
@@ -58,7 +67,7 @@ const Index = () => {
       toast.error("Failed to connect to analysis service.");
       setIsLoading(false);
     }
-  }, []);
+  }, [mode, user]);
 
   const handleExampleSelect = (code: string) => {
     sourceRef.current = "example";
@@ -66,7 +75,7 @@ const Index = () => {
     handleAnalyze(code);
   };
 
-  const handleGitHubFetch = (code: string, repoName: string) => {
+  const handleGitHubFetch = (code: string, _repoName: string) => {
     sourceRef.current = "github";
     handleAnalyze(code);
   };
@@ -80,6 +89,7 @@ const Index = () => {
     codeRef.current = entry.code;
     questionRef.current = entry.question;
     sourceRef.current = entry.source;
+    if (entry.mode) setMode(entry.mode as AnalysisMode);
     setOutput(entry.output);
   };
 
@@ -120,8 +130,14 @@ const Index = () => {
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Paste your code, fetch from GitHub, or upload files. Get instant AI-powered
-            architecture analysis, flow explanations, and technical walkthroughs.
+            architecture analysis, security audits, performance reviews, and more.
           </p>
+        </div>
+
+        {/* Analysis Mode Selector */}
+        <div className="mb-6">
+          <p className="text-sm text-muted-foreground text-center mb-3">Choose analysis mode</p>
+          <AnalysisModeSelector value={mode} onChange={setMode} />
         </div>
 
         <div className="mb-8">
@@ -160,7 +176,6 @@ const Index = () => {
           } : undefined}
         />
 
-        {/* Follow-up questions */}
         {output && !isLoading && codeRef.current && (
           <FollowUpInput onSubmit={handleFollowUp} isLoading={isLoading} />
         )}
@@ -174,13 +189,13 @@ const Index = () => {
                 icon: "🏗️",
               },
               {
-                title: "Flow Tracing",
-                description: "Maps request flows, data pipelines, and component relationships end-to-end.",
-                icon: "🔀",
+                title: "Security Audit",
+                description: "Scans for vulnerabilities, hardcoded secrets, injection risks, and more.",
+                icon: "🛡️",
               },
               {
-                title: "Instant Onboarding",
-                description: "Get a principal engineer-level walkthrough of any codebase in seconds.",
+                title: "Performance Review",
+                description: "Finds N+1 queries, memory leaks, missing memoization, and bottlenecks.",
                 icon: "⚡",
               },
             ].map((feature) => (

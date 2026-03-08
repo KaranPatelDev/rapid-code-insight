@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { HistoryEntry, getHistory, deleteFromHistory, clearHistory } from "@/lib/history";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { History, Trash2, Clock, Github, Code2, FileText, Sparkles, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { History, Trash2, Clock, Github, Code2, FileText, Sparkles, Search } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 interface HistoryPanelProps {
@@ -16,20 +17,38 @@ const sourceIcons = {
   example: Sparkles,
 };
 
+const modeLabels: Record<string, string> = {
+  architecture: "Architecture",
+  security: "Security",
+  performance: "Performance",
+  best_practices: "Best Practices",
+};
+
 export function HistoryPanel({ onSelect }: HistoryPanelProps) {
-  const [history, setHistory] = useState<HistoryEntry[]>(() => getHistory());
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const refresh = () => setHistory(getHistory());
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    const data = await getHistory();
+    setHistory(data);
+    setLoading(false);
+  }, []);
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
+  useEffect(() => {
+    if (open) refresh();
+  }, [open, refresh]);
+
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    deleteFromHistory(id);
+    await deleteFromHistory(id);
     refresh();
   };
 
-  const handleClear = () => {
-    clearHistory();
+  const handleClear = async () => {
+    await clearHistory();
     refresh();
   };
 
@@ -38,16 +57,19 @@ export function HistoryPanel({ onSelect }: HistoryPanelProps) {
     setOpen(false);
   };
 
+  const filtered = search.trim()
+    ? history.filter(
+        (e) =>
+          e.title.toLowerCase().includes(search.toLowerCase()) ||
+          e.question?.toLowerCase().includes(search.toLowerCase())
+      )
+    : history;
+
   return (
-    <Sheet open={open} onOpenChange={(v) => { setOpen(v); if (v) refresh(); }}>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground relative">
           <History className="h-4 w-4" />
-          {history.length > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-primary text-[9px] font-bold text-primary-foreground flex items-center justify-center">
-              {history.length > 9 ? "9+" : history.length}
-            </span>
-          )}
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-[380px] sm:w-[420px]">
@@ -65,16 +87,35 @@ export function HistoryPanel({ onSelect }: HistoryPanelProps) {
           </div>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-100px)] mt-4 -mx-2">
-          {history.length === 0 ? (
+        {history.length > 3 && (
+          <div className="relative mt-3">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search analyses..."
+              className="pl-9 h-9 text-sm bg-muted/50 border-border/50"
+            />
+          </div>
+        )}
+
+        <ScrollArea className="h-[calc(100vh-140px)] mt-4 -mx-2">
+          {loading ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-sm">Loading history...</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <History className="h-8 w-8 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">No analyses yet</p>
-              <p className="text-xs mt-1">Your analysis history will appear here</p>
+              <p className="text-sm">{search ? "No matching analyses" : "No analyses yet"}</p>
+              <p className="text-xs mt-1">
+                {search ? "Try a different search term" : "Your analysis history will appear here"}
+              </p>
             </div>
           ) : (
             <div className="space-y-1 px-2">
-              {history.map((entry) => {
+              {filtered.map((entry) => {
                 const SourceIcon = sourceIcons[entry.source] || Code2;
                 return (
                   <button
@@ -87,9 +128,14 @@ export function HistoryPanel({ onSelect }: HistoryPanelProps) {
                         <SourceIcon className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
                         <div className="min-w-0">
                           <p className="text-sm font-medium truncate">{entry.title}</p>
-                          <div className="flex items-center gap-1.5 mt-1 text-xs text-muted-foreground">
-                            <Clock className="h-3 w-3" />
-                            {formatTime(entry.timestamp)}
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                              {modeLabels[entry.mode || "architecture"] || entry.mode}
+                            </span>
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <Clock className="h-3 w-3" />
+                              {formatTime(entry.timestamp)}
+                            </span>
                           </div>
                         </div>
                       </div>

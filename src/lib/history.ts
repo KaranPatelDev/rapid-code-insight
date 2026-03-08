@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 export interface HistoryEntry {
   id: string;
   title: string;
@@ -6,45 +8,75 @@ export interface HistoryEntry {
   output: string;
   timestamp: number;
   source: "paste" | "github" | "file" | "example";
+  mode?: string;
 }
 
-const STORAGE_KEY = "codelens-history";
-const MAX_ENTRIES = 50;
+export async function getHistory(): Promise<HistoryEntry[]> {
+  const { data, error } = await supabase
+    .from("analyses")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(50);
 
-export function getHistory(): HistoryEntry[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+  if (error || !data) return [];
+
+  return data.map((row: any) => ({
+    id: row.id,
+    title: row.title,
+    code: row.code,
+    question: row.question ?? undefined,
+    output: row.output,
+    timestamp: new Date(row.created_at).getTime(),
+    source: row.source as HistoryEntry["source"],
+    mode: row.mode,
+  }));
 }
 
-export function addToHistory(entry: Omit<HistoryEntry, "id" | "timestamp">): HistoryEntry {
-  const newEntry: HistoryEntry = {
-    ...entry,
-    id: crypto.randomUUID(),
-    timestamp: Date.now(),
+export async function addToHistory(
+  entry: Omit<HistoryEntry, "id" | "timestamp">,
+  userId: string
+): Promise<HistoryEntry | null> {
+  const { data, error } = await supabase
+    .from("analyses")
+    .insert({
+      user_id: userId,
+      title: entry.title,
+      code: entry.code,
+      question: entry.question ?? null,
+      output: entry.output,
+      source: entry.source,
+      mode: entry.mode ?? "architecture",
+    })
+    .select()
+    .single();
+
+  if (error || !data) return null;
+
+  return {
+    id: data.id,
+    title: data.title,
+    code: data.code,
+    question: data.question ?? undefined,
+    output: data.output,
+    timestamp: new Date(data.created_at).getTime(),
+    source: data.source as HistoryEntry["source"],
+    mode: data.mode,
   };
-  const history = getHistory();
-  history.unshift(newEntry);
-  if (history.length > MAX_ENTRIES) history.pop();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-  return newEntry;
 }
 
-export function deleteFromHistory(id: string) {
-  const history = getHistory().filter((e) => e.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+export async function deleteFromHistory(id: string) {
+  await supabase.from("analyses").delete().eq("id", id);
 }
 
-export function clearHistory() {
-  localStorage.removeItem(STORAGE_KEY);
+export async function clearHistory() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    await supabase.from("analyses").delete().eq("user_id", user.id);
+  }
 }
 
 export function generateTitle(code: string, question?: string): string {
   if (question) return question.slice(0, 60);
-  // Try to extract a meaningful title from the code
   const lines = code.split("\n").filter((l) => l.trim());
   for (const line of lines.slice(0, 10)) {
     if (line.includes("class ")) {

@@ -6,15 +6,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
-  try {
-    const { code, question } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
-    const systemPrompt = `You are a senior software architect and codebase analyst. Your task is to analyze code and explain it clearly to developers.
+const systemPrompts: Record<string, string> = {
+  architecture: `You are a senior software architect and codebase analyst. Your task is to analyze code and explain it clearly to developers.
 
 When given code or a repository structure:
 1. Identify the architecture, patterns, and key modules
@@ -25,11 +18,81 @@ When given code or a repository structure:
 6. Reference exact file paths and function names
 7. Never hallucinate files or functions that don't exist in the provided code
 
-Format your response with clear sections using markdown headers, code blocks for references, and concise but insightful explanations. Think like a principal engineer giving a rapid technical walkthrough.`;
+Format your response with clear sections using markdown headers, code blocks for references, and concise but insightful explanations. Think like a principal engineer giving a rapid technical walkthrough.`,
+
+  security: `You are a senior application security engineer performing a thorough security audit. Analyze the provided code for vulnerabilities.
+
+Focus areas:
+1. **Injection Risks**: SQL injection, XSS, command injection, template injection
+2. **Authentication & Authorization**: Weak auth, missing access controls, privilege escalation
+3. **Secrets & Configuration**: Hardcoded credentials, exposed API keys, insecure defaults
+4. **Data Exposure**: PII leaks, verbose error messages, insecure logging
+5. **Dependencies**: Known vulnerable patterns, unsafe library usage
+6. **Input Validation**: Missing sanitization, type coercion issues
+7. **CSRF/CORS**: Cross-site request forgery, overly permissive CORS
+
+For each finding, provide:
+- **Severity**: Critical / High / Medium / Low
+- **Location**: Exact file and line reference
+- **Description**: What the vulnerability is
+- **Remediation**: How to fix it with code examples
+
+Format as a structured security report with a summary table at the top.`,
+
+  performance: `You are a senior performance engineer analyzing code for efficiency issues. Identify bottlenecks and optimization opportunities.
+
+Focus areas:
+1. **Database**: N+1 queries, missing indexes, unoptimized joins, excessive data fetching
+2. **Memory**: Memory leaks, excessive allocations, unbounded caches, closure leaks
+3. **Rendering**: Unnecessary re-renders, missing memoization, layout thrashing
+4. **Network**: Redundant API calls, missing caching, large payloads, waterfall requests
+5. **Algorithms**: Suboptimal time/space complexity, unnecessary iterations
+6. **Concurrency**: Blocking operations, missing parallelization, race conditions
+7. **Bundle Size**: Unused imports, large dependencies, missing code splitting
+
+For each issue, provide:
+- **Impact**: High / Medium / Low
+- **Location**: Exact code reference
+- **Problem**: What's slow and why
+- **Solution**: Optimized code example
+
+Include a prioritized action plan at the end.`,
+
+  best_practices: `You are a senior code reviewer evaluating code quality and maintainability. Assess adherence to best practices.
+
+Focus areas:
+1. **Code Organization**: File structure, module boundaries, separation of concerns
+2. **Type Safety**: Missing types, unsafe casts, proper generics usage
+3. **Error Handling**: Unhandled promises, missing try/catch, error propagation
+4. **Testing**: Testability, missing edge cases, test structure
+5. **DRY Principle**: Code duplication, abstraction opportunities
+6. **Naming**: Unclear variable/function names, inconsistent conventions
+7. **Documentation**: Missing JSDoc, unclear interfaces, magic numbers
+8. **Accessibility**: Missing ARIA labels, keyboard navigation, semantic HTML
+9. **Modern Patterns**: Outdated APIs, deprecated methods, newer alternatives
+
+For each suggestion, provide:
+- **Category**: Which area it falls under
+- **Location**: Exact code reference
+- **Current**: What exists now
+- **Suggested**: Improved code with explanation
+
+End with a code quality score (1-10) and top 5 priorities.`,
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  try {
+    const { code, question, mode = "architecture" } = await req.json();
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    const systemPrompt = systemPrompts[mode] || systemPrompts.architecture;
 
     const userMessage = question
       ? `Here is the codebase:\n\n\`\`\`\n${code}\n\`\`\`\n\nQuestion: ${question}`
-      : `Analyze and explain this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
+      : `Analyze this codebase:\n\n\`\`\`\n${code}\n\`\`\``;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
