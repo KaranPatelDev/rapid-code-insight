@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,6 +7,28 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// --- Config ---
+const MAX_CODE_SIZE = 500_000; // 500KB
+const DAILY_LIMIT = 50; // analyses per user per day
+const RATE_LIMIT_WINDOW_MS = 10_000; // 10 seconds
+const RATE_LIMIT_MAX = 3; // max requests per window
+
+// Simple in-memory rate limiter (per instance)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(key: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(key);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count++;
+  return true;
+}
+
+// --- System Prompts ---
 const systemPrompts: Record<string, string> = {
   architecture: `You are a senior software architect. Analyze the codebase and explain its architecture.
 
@@ -311,12 +334,89 @@ IMPORTANT RULES:
 - Include copy-pasteable commands wherever possible`,
 };
 
-
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { code, question, mode = "architecture" } = await req.json();
+    const body = await req.json();
+    const { code, question, mode = "architecture" } = body;
+
+    // --- Input validation ---
+    if (!code || typeof code !== "string") {
+      return new Response(JSON.stringify({ error: "Code input is required." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (code.length > MAX_CODE_SIZE) {
+      return new Response(JSON.stringify({ error: `Code input too large. Maximum size is ${MAX_CODE_SIZE / 1000}KB.` }), {
+        status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (question && typeof question === "string" && question.length > 2000) {
+      return new Response(JSON.stringify({ error: "Question too long. Maximum 2000 characters." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- Extract user from JWT for rate limiting & usage caps ---
+    const authHeader = req.headers.get("authorization") || "";
+    let userId: string | null = null;
+    let rateLimitKey = "anon";
+
+    if (authHeader.startsWith("Bearer ")) {
+      const token = authHeader.slice(7);
+      // Try to get user from Supabase
+      try {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        const { data: { user } } = await supabase.auth.getUser(token);
+        if (user) {
+          userId = user.id;
+          rateLimitKey = userId;
+        }
+      } catch { /* continue as anon */ }
+    }
+
+    // --- Per-user rate limiting (short window) ---
+    if (!checkRateLimit(rateLimitKey)) {
+      return new Response(JSON.stringify({ error: "Too many requests. Please wait a few seconds and try again." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- Daily usage cap (for authenticated users) ---
+    if (userId) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      const today = new Date().toISOString().split("T")[0];
+
+      const { data: usage } = await supabase
+        .from("daily_usage")
+        .select("analysis_count")
+        .eq("user_id", userId)
+        .eq("usage_date", today)
+        .maybeSingle();
+
+      const currentCount = usage?.analysis_count || 0;
+
+      if (currentCount >= DAILY_LIMIT) {
+        return new Response(JSON.stringify({ error: `Daily analysis limit reached (${DAILY_LIMIT}/day). Try again tomorrow.` }), {
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Upsert usage count
+      await supabase.from("daily_usage").upsert(
+        { user_id: userId, usage_date: today, analysis_count: currentCount + 1 },
+        { onConflict: "user_id,usage_date" }
+      );
+    }
+
+    // --- AI analysis ---
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
